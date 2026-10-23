@@ -78,3 +78,5 @@ if(location.protocol.startsWith('http')&&location.hostname!=='localhost'&&'servi
     }).catch(error=>console.warn('Offline setup failed:',error));
   },{once:true});
 }
+// 預先載入露比的表情圖，換表情時不會閃一下
+addEventListener('load',()=>['ruby_cheer','ruby_comfort','ruby_eat','ruby_sleep'].forEach(id=>{const src=ASSETS[id]&&ASSETS[id].img;if(src)new Image().src=src}),{once:true});

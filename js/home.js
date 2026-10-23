@@ -37,10 +37,11 @@ function roomRubyTarget(x,y,width=26,height=40){
     y:Math.max(top,Math.min(98,Number.isFinite(y)?y:92))};
 }
 function roomRubyDepth(y){return 10+Math.round(y)}
-function roomIdle(callback,clock={setTimeout,clearTimeout,random:Math.random}){
+// 預設時鐘要包成箭頭函式：直接傳 setTimeout 當物件方法呼叫，瀏覽器會報 Illegal invocation
+function roomIdle(callback,clock={setTimeout:(fn,ms)=>setTimeout(fn,ms),clearTimeout:id=>clearTimeout(id),random:()=>Math.random()}){
   let timer=null,disposed=false;
   const pause=()=>{if(timer!==null)clock.clearTimeout(timer);timer=null};
-  const reset=()=>{pause();if(!disposed)timer=clock.setTimeout(()=>{timer=null;if(!disposed)callback()},8000+clock.random()*6000)};
+  const reset=()=>{pause();if(!disposed)timer=clock.setTimeout(()=>{timer=null;if(!disposed)callback()},4000+clock.random()*3000)};
   return {reset,pause,dispose(){pause();disposed=true}};
 }
 function stopRoomRuby(){if(roomWalker){roomWalker.dispose();roomWalker=null}}
@@ -119,12 +120,16 @@ function walkRoomRuby(scene,ruby,content){
   const bounds=()=>roomRubyTarget(pos?.x,pos?.y,size.w,size.h);
   const paint=()=>{ruby.style.left=pos.x+'%';ruby.style.bottom=(100-pos.y)+'%';ruby.style.zIndex=roomRubyDepth(pos.y)};
   const save=()=>store.set('rubyPos',{x:pos.x,y:pos.y});
-  const stop=()=>{cancelAnimationFrame(frame);frame=0;ruby.classList.remove('room-walking');save()};
+  const stop=()=>{cancelAnimationFrame(frame);frame=0;ruby.classList.remove('room-walking');step.style.transform='';save()};
   const clearCheer=()=>{clearTimeout(cheerTimer);cheerTimer=0;step.querySelector('.ruby-base').replaceWith(htmlRuby('ruby'));ruby.classList.remove('room-happy')};
   function htmlRuby(id){const box=div('');box.innerHTML=art(id,'ruby-base');return box.firstElementChild}
   const happy=(cheer=false)=>{
     clearCheer();
-    if(cheer){step.querySelector('.ruby-base').replaceWith(htmlRuby('ruby_cheer'));sfx.pop()}
+    if(cheer){
+      // 先把歡呼圖解碼好再換，避免換圖時閃一下空白
+      const next=htmlRuby('ruby_cheer');sfx.pop();
+      (next.decode?next.decode():Promise.resolve()).catch(()=>{}).then(()=>{if(!disposed&&cheerTimer)step.querySelector('.ruby-base').replaceWith(next)});
+    }
     ruby.classList.add('room-happy');cheerTimer=setTimeout(clearCheer,cheer?800:400);
   };
   const walk=(x,y)=>{
@@ -132,13 +137,13 @@ function walkRoomRuby(scene,ruby,content){
     const from={...pos},to=roomRubyTarget(x,y,size.w,size.h);
     ruby.style.setProperty('--room-facing',to.x<from.x?-1:1);
     const duration=Math.max(400,Math.hypot(to.x-from.x,(to.y-from.y)*size.ratio)/22*1000);
-    if(reduceMotion){pos=to;paint();save();happy();return}
     ruby.classList.add('room-walking');let start=null;
     const tick=now=>{
       if(disposed)return;
       if(start===null)start=now;
       const t=Math.min(1,(now-start)/duration);
       pos={x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t};paint();
+      const s=Math.sin((now-start)/175*Math.PI);step.style.transform=`rotate(${(s*6).toFixed(2)}deg) translateY(${(-Math.abs(s)*6).toFixed(2)}%)`;
       if(t<1)frame=requestAnimationFrame(tick);
       else {stop();happy()}
     };frame=requestAnimationFrame(tick);

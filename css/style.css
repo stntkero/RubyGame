@@ -263,7 +263,7 @@ button.piece{cursor:pointer}
 .room-scene{container-type:size;touch-action:none}
 .room-ruby{position:absolute;width:min(210px,26vw,38cqw,80cqh);bottom:8%;left:25%;z-index:102;pointer-events:auto;cursor:pointer;touch-action:none;transform:translateX(-50%) scaleX(var(--room-facing,1))}
 .room-ruby-step{transform-origin:50% 95%}
-.room-walking .room-ruby-step{animation:room-waddle .35s ease-in-out infinite}
+/* 搖擺改由 home.js 逐格計算 */
 .room-happy .room-ruby-step{animation:room-jump .4s ease-in-out}
 @keyframes room-waddle{0%,100%{transform:rotate(-6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-6%)}}
 @keyframes room-jump{0%,100%{transform:translateY(0)}45%{transform:translateY(-8%)}}
@@ -333,6 +333,12 @@ button.piece{cursor:pointer}
   #home{background-image:url(../assets/game/bg/home-landscape.webp)}
   #game,#house{background-image:url(../assets/game/bg/game-landscape.webp)}
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(#home,#game,#house){background-image:url(../assets/game/bg/night-portrait.webp)}}
-@media (prefers-color-scheme:dark) and (orientation:landscape){:root:not([data-theme="light"]) :is(#home,#game,#house){background-image:url(../assets/game/bg/night-landscape.webp)}}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) #home{background-image:url(../assets/game/bg/night-home-portrait.webp)}
+  :root:not([data-theme="light"]) :is(#game,#house){background-image:url(../assets/game/bg/night-game-portrait.webp)}
+}
+@media (prefers-color-scheme:dark) and (orientation:landscape){
+  :root:not([data-theme="light"]) #home{background-image:url(../assets/game/bg/night-home-landscape.webp)}
+  :root:not([data-theme="light"]) :is(#game,#house){background-image:url(../assets/game/bg/night-game-landscape.webp)}
+}
 .parent-tip{background:var(--paper);border-radius:12px;padding:4px 10px;opacity:.85}

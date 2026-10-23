@@ -50,8 +50,8 @@ for(const y of [55,64.2,80,98])assert.equal(roomRubyDepth(y),10+Math.round(y));
 const timers=new Map();let sequence=0,fired=0,random=0;
 const clock={setTimeout(fn,delay){const id=++sequence;timers.set(id,{fn,delay});return id},clearTimeout(id){timers.delete(id)},random:()=>random};
 let idle;idle=roomIdle(()=>{fired++;idle.reset()},clock);
-idle.reset();assert.equal(timers.size,1);assert.equal([...timers.values()][0].delay,8000);
-random=1;idle.reset();assert.equal(timers.size,1);assert.equal([...timers.values()][0].delay,14000);
+idle.reset();assert.equal(timers.size,1);assert.equal([...timers.values()][0].delay,4000);
+random=1;idle.reset();assert.equal(timers.size,1);assert.equal([...timers.values()][0].delay,7000);
 const [timerId,timer]=[...timers][0];timers.delete(timerId);timer.fn();
 assert.equal(fired,1);assert.equal(timers.size,1,'Wandering keeps going while idle');
 idle.pause();assert.equal(timers.size,0,'Touching/holding the room pauses idle');
@@ -102,7 +102,7 @@ for(const reduced of [false,true]){
   down(pointer(scene,300,300));scene.emit('pointermove',pointer(scene,320,300));up(pointer(scene,300,300));
   assert.equal(frames.size,0,'A drag that returns to its start is still not a tap');
   down(pointer(scene,400,10));assert.equal(timers.size,0,'A held touch pauses wandering');up(pointer(scene,400,10));
-  if(!reduced){
+  { // 走路一律有移動動畫（不受減少動態效果影響）
     assert.equal(frames.size,1);advanceFrame(0);advanceFrame(500);
     assert.equal(ruby.style.zIndex,context.roomRubyDepth(100-parseFloat(ruby.style.bottom)));
     assert.ok(ruby.classList.contains('room-walking'));advanceFrame(10000);
@@ -110,7 +110,7 @@ for(const reduced of [false,true]){
   assert.equal(data.rubyPos.x,80);assert.equal(data.rubyPos.y,55);
   assert.equal(ruby.classList.contains('room-walking'),false);
   down(pointer(ruby,400,200));up(pointer(ruby,400,200));
-  assert.equal(pops,1);assert.equal(ruby.firstElementChild.querySelector().art,'ruby_cheer');
+  assert.equal(pops,1);await new Promise(r=>setImmediate(r));assert.equal(ruby.firstElementChild.querySelector().art,'ruby_cheer');
   const cheer=[...timers].find(([,t])=>t.delay===800);assert.ok(cheer);
   timers.delete(cheer[0]);cheer[1].fn();assert.equal(ruby.firstElementChild.querySelector().art,'ruby');
   down(pointer(scene,100,350));up(pointer(scene,100,350));
