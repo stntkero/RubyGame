@@ -26,7 +26,8 @@
 <script defer src="js/games/feed.js"></script>
 <script defer src="js/games/pattern.js"></script>
 <script defer src="js/games/size.js"></script>
-<script defer src="js/bank.js"></script>
+<script defer src="js/ruby.js"></script>
+<script defer src="js/home.js"></script>
 <script defer src="js/main.js"></script>
 </head>
 <body>
@@ -39,9 +40,9 @@
         <button id="soundBtn" class="icon-btn" aria-label="聲音開關"><span data-art="soundon"></span></button>
       </div>
     </header>
-    <h1 class="title" aria-label="寶貝動動腦">
+    <div class="home-heading"><button id="homeRuby" aria-label="和露比打招呼"></button><h1 class="title" aria-label="寶貝動動腦">
       <span style="--t:#FFD35C;--r:-6deg">寶</span><span style="--t:#FF9EC0;--r:4deg">貝</span><span style="--t:#9FD8FF;--r:-3deg">動</span><span style="--t:#A8E6B8;--r:5deg">動</span><span style="--t:#C9B5FF;--r:-4deg">腦</span>
-    </h1>
+    </h1></div>
     <div class="diff" role="group" aria-label="難度">
       <button data-diff="0">簡單</button><button data-diff="1">普通</button><button data-diff="2">挑戰</button>
     </div>
@@ -53,7 +54,7 @@
       <button class="game-btn" data-game="pattern" style="--c:#C9B5FF"><span data-art="repeat"></span><span>規律接龍</span></button>
       <button class="game-btn" data-game="size" style="--c:#A8E6B8"><span data-art="ruler"></span><span>大小排排站</span></button>
       <button class="game-btn feed-menu" data-game="feed" style="--c:#FFB3CF"><span data-art="fish"></span><span>餵露比</span></button>
-      <button class="game-btn wide" id="bankBtn" style="--c:#FFE7A0"><span data-art="pig"></span><span>存錢豬</span></button>
+      <button class="game-btn wide" id="houseBtn" style="--c:#FFE7A0"><span data-art="ruby_house"></span><span>露比的家</span></button>
     </div>
     <p class="parent-tip">家長小提示：在瀏覽器選「加入主畫面」，就能像 App 一樣全螢幕開啟。</p>
   </section>
@@ -67,21 +68,19 @@
     <div id="stage" class="stage"></div>
   </section>
 
-  <section id="bank" class="screen" hidden>
+  <section id="house" class="screen" hidden>
     <header class="bar">
       <button class="icon-btn home-btn" aria-label="回首頁"><span data-art="home"></span></button>
-      <div class="stars"><span style="display:inline" data-art="star"></span> <span id="bankStars">0</span></div>
+      <div class="stars" aria-label="我的星星"><span style="display:inline" data-art="star"></span> <span id="houseStars">0</span></div>
       <div class="spacer"></div>
     </header>
-    <div class="bank">
-      <span id="pig" class="pig" data-art="pig"></span>
-      <div id="jar" class="jar"></div>
-      <div class="bank-actions">
-        <button id="spendBtn" class="game-btn" style="--c:#FF9EC0"><span data-art="candy"></span><span>換貼紙</span></button>
-        <button id="saveBtn" class="game-btn" style="--c:#FFD35C"><span data-art="pig"></span><span>存起來</span></button>
-      </div>
-      <div id="album" class="album"></div>
+    <div class="house-tabs" role="group" aria-label="露比的家">
+      <button data-house-tab="wardrobe" aria-label="衣櫃"></button>
+      <button data-house-tab="room" aria-label="房間"></button>
+      <button data-house-tab="stickers" aria-label="貼紙"></button>
     </div>
+    <div id="houseContent" class="house-content"></div>
+    <div id="houseShop" class="house-shop" hidden role="dialog" aria-modal="true" aria-label="商店"></div>
   </section>
 </div>
 <div id="cheer" class="cheer" hidden><div id="cheerEmoji" class="cheer-emoji emoji"><span data-art="party"></span></div></div>

@@ -7,7 +7,7 @@ const PROMPT_EVERY_ROUND={pattern:1,size:1};
 /* ---------- 流程 ---------- */
 const stage=$('#stage');
 let current=null,round=0,gen=0,relayout=null;
-function show(id){['home','game','bank'].forEach(x=>$('#'+x).hidden=x!==id)}
+function show(id){['home','game','house'].forEach(x=>$('#'+x).hidden=x!==id)}
 function renderProgress(){
   const p=$('#progress');p.innerHTML='';
   for(let i=0;i<5;i++){const d=document.createElement('i');if(i<round%5)d.className='on';p.append(d)}
@@ -36,7 +36,7 @@ function cheer(id,big){
   if(!reduceMotion)confetti(big?160:70);
 }
 function startGame(name){gen++;current=name;round=0;show('game');if(PROMPTS[name])say(PROMPTS[name]);requestAnimationFrame(nextRound)}
-function goHome(){gen++;current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home')}
+function goHome(){gen++;current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home');paintHomeRuby()}
 
 document.querySelectorAll('.game-btn[data-game]').forEach(b=>b.addEventListener('click',()=>{sfx.pop();startGame(b.dataset.game)}));
 document.querySelectorAll('.home-btn').forEach(b=>b.addEventListener('click',goHome));
@@ -56,3 +56,4 @@ const diffBtns=document.querySelectorAll('.diff button');
 function paintDiff(){diffBtns.forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.diff===diff)))}
 diffBtns.forEach(b=>b.addEventListener('click',()=>{diff=+b.dataset.diff;store.set('diff',diff);paintDiff();sfx.pop()}));
 paintDiff();
+initRubyHome();
