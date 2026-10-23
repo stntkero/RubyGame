@@ -35,7 +35,7 @@ GAMES.feed = function(stage,L,done){
     if(fed.length===needed){celebrate();return}
     ruby.innerHTML=art('ruby_comfort');ruby.classList.remove('wiggle');void ruby.offsetWidth;ruby.classList.add('wiggle');
     const missing=needed-fed.length;
-    say(missing>0?'還要再'+NUMS[missing-1]+'條':'太多了，拿回去一條');
+    say(missing>0?'還要再'+NUMS[missing-1]+'條':'太多了，拿回去'+NUMS[-missing-1]+'條');
   };
   ruby.addEventListener('click',confirm);
   request.addEventListener('click',()=>{interacted=true;if(!finished)ask()});

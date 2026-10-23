@@ -159,7 +159,7 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
 .feed-bowl-fish{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:calc(var(--s)*2.9)}
 .feed-fish-slot{width:max(44px,calc(var(--s)*.58));height:max(44px,calc(var(--s)*.58));display:grid;place-items:center;border-radius:50%}
 .feed-fish-slot.guided:not(.filled){border:2px dashed var(--dash);opacity:.55}
-.feed-fish-slot.filled{background:#D9F4FF;border:3px solid #2F3A68}
+.feed-fish-slot.filled{background:none;border:0}
 .feed-fish-slot .emoji,.feed-fish-slot .art{font-size:calc(var(--s)*.4)}
 .feed-pop{animation:pop .3s}
 .feed-happy{animation:boing .7s}
@@ -240,7 +240,7 @@ button.piece{cursor:pointer}
 .ruby-wear{position:absolute;z-index:3;display:grid;place-items:center;container-type:inline-size}
 .ruby-wear>.art{width:100%;height:100%;object-fit:contain}
 .ruby-wear>.emoji{font-size:100cqw}
-.ruby-wear-back{z-index:2}
+.ruby-wear-back{z-index:0}
 .ruby-bounce{animation:pop .4s}
 .house-tabs{display:flex;justify-content:center;gap:16px;padding:0 12px 10px;flex-shrink:0}
 .house-tabs button{width:76px;height:64px;background:var(--paper);border:3px solid var(--ink);border-radius:20px;box-shadow:0 4px 0 var(--ink);font-size:36px}

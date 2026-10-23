@@ -20,14 +20,14 @@ const SMALL=['candy','lollipop','blossom','ladybug','butterfly','clover','ribbon
 const RARE=['unicorn','crown','castle','rainbow','carousel','fairy','dragon','diamond','ferriswheel','peacock'];
 // Anchors are centers; size is a percentage of Ruby's width, including future item images.
 const WEARABLES=[
-  {id:'flower_crown',n:'花冠',slot:'head',tier:'small',anchor:{x:46,y:18,size:34,rot:14}},
-  {id:'party_hat',n:'派對帽',slot:'head',tier:'medium',anchor:{x:47,y:14,size:35,rot:14}},
-  {id:'royal_crown',n:'皇冠',slot:'head',tier:'large',anchor:{x:47,y:16,size:36,rot:14}},
-  {id:'pink_bow',n:'粉紅蝴蝶結',slot:'hair',tier:'small',anchor:{x:31,y:24,size:24,rot:-22}},
-  {id:'star_clip',n:'星星髮夾',slot:'hair',tier:'small',anchor:{x:65,y:27,size:20,rot:18}},
-  {id:'cape',n:'披風',slot:'back',tier:'medium',anchor:{x:62,y:60,size:44,rot:-12}},
-  {id:'glasses',n:'眼鏡',slot:'face',tier:'medium',anchor:{x:46,y:39,size:42,rot:18}},
-  {id:'scarf',n:'圍巾',slot:'neck',tier:'small',anchor:{x:45,y:55,size:32,rot:12}}
+  {id:'flower_crown',n:'花冠',slot:'head',tier:'small',anchor:{x:50,y:9,size:44,rot:15}},
+  {id:'party_hat',n:'派對帽',slot:'head',tier:'medium',anchor:{x:53,y:5,size:30,rot:15}},
+  {id:'royal_crown',n:'皇冠',slot:'head',tier:'large',anchor:{x:50,y:10,size:33,rot:15}},
+  {id:'pink_bow',n:'粉紅蝴蝶結',slot:'hair',tier:'small',anchor:{x:25,y:14,size:19,rot:-20}},
+  {id:'star_clip',n:'星星髮夾',slot:'hair',tier:'small',anchor:{x:70,y:21,size:15,rot:20}},
+  {id:'cape',n:'披風',slot:'back',tier:'medium',anchor:{x:50,y:64,size:66,rot:0}},
+  {id:'glasses',n:'眼鏡',slot:'face',tier:'medium',anchor:{x:44,y:37.5,size:42,rot:18}},
+  {id:'scarf',n:'圍巾',slot:'neck',tier:'small',anchor:{x:43,y:69,size:33,rot:8}}
 ];
 const ROOM_ITEMS=[
   {id:'room_bed',n:'床',tier:'large'},{id:'room_rug',n:'地毯',tier:'medium'},
