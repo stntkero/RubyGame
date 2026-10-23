@@ -17,13 +17,13 @@ GAMES.feed = function(stage,L,done){
   let finished=false,interacted=false;
   // Delayed speech and completion must not escape a round after going home.
   const later=(fn,ms)=>setTimeout(()=>{if(root.isConnected)fn()},ms);
-  const ask=()=>say('露比想吃'+NUMS[needed-1]+'條魚'+(showSlots?'':'，餵好了，按鈴鐺。點碗裡的魚可以拿回去'));
+  const ask=()=>say('露比想吃'+NUMS[needed-1]+'條魚');
   const countAloud=()=>say(fed.length===2?'二':NUMS[fed.length-1]||'八');
   const celebrate=()=>{
     if(finished)return;
     finished=true;
     later(()=>{
-      ruby.classList.remove('wiggle');ruby.classList.add('feed-happy');
+      ruby.classList.remove('wiggle');ruby.innerHTML=art('ruby_eat');ruby.classList.add('feed-happy');
       sfx.ok();say('好好吃！謝謝你！');
       later(done,1600);
     },500);
@@ -33,7 +33,7 @@ GAMES.feed = function(stage,L,done){
     interacted=true;
     if(showSlots){ask();return}
     if(fed.length===needed){celebrate();return}
-    ruby.classList.remove('wiggle');void ruby.offsetWidth;ruby.classList.add('wiggle');
+    ruby.innerHTML=art('ruby_comfort');ruby.classList.remove('wiggle');void ruby.offsetWidth;ruby.classList.add('wiggle');
     const missing=needed-fed.length;
     say(missing>0?'還要再'+NUMS[missing-1]+'條':'太多了，拿回去一條');
   };

@@ -147,8 +147,7 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
 /* Feed Ruby: visual request, generous bowl target, and a stable two-row pile. */
 .feed-game{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:space-around;gap:10px}
 .feed-top{display:flex;align-items:center;justify-content:center;gap:8px;max-width:100%}
-.feed-ruby{width:calc(var(--s)*1.6);height:calc(var(--s)*1.6);flex-shrink:0;display:grid;place-items:center;
-  background:#FFB3CF;border-radius:45%;border:3px solid var(--ink)}
+.feed-ruby{width:calc(var(--s)*1.6);height:calc(var(--s)*1.6);flex-shrink:0;display:grid;place-items:center}
 .feed-ruby .emoji,.feed-ruby .art{font-size:calc(var(--s)*1.45)}
 .feed-request{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;padding:10px;
   max-width:calc(var(--s)*1.7);min-width:54px;min-height:54px}
@@ -156,9 +155,9 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
   background:var(--paper);border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
 .feed-request .emoji,.feed-request .art{font-size:calc(var(--s)*.34)}
 .feed-bell{flex-shrink:0;background:#FFF0A8;color:#2F3A68}
-.feed-bowl{position:relative;display:grid;place-items:center;width:min(100%,calc(var(--s)*3.8));
-  min-height:calc(var(--s)*1.9);padding:12px;background:var(--paper);border:4px solid var(--berry);border-radius:24px 24px 45% 45%}
-.feed-bowl-art{position:absolute;bottom:0;font-size:calc(var(--s)*1.6);opacity:.3}
+.feed-bowl{position:relative;display:grid;place-items:center;width:min(100%,calc(var(--s)*3.8));min-height:calc(var(--s)*1.9)}
+.feed-bowl-art{position:absolute;inset:0;width:100%;height:100%;font-size:calc(var(--s)*1.9);object-fit:contain;margin:auto}
+.feed-bowl-fish{transform:translateY(-6%)}
 .feed-bowl-fish{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:calc(var(--s)*2.9)}
 .feed-fish-slot{width:max(44px,calc(var(--s)*.58));height:max(44px,calc(var(--s)*.58));display:grid;place-items:center;border-radius:50%}
 .feed-fish-slot.guided{border:3px dashed var(--dash);background:var(--hole)}

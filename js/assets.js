@@ -48,7 +48,7 @@ const ASSETS = {
   soccer: { emoji: '⚽' },
   music: { emoji: '🎵' },
   music_off: { emoji: '🔕' },
-  fish: { emoji: '🐟' },
+  fish: { emoji: '🐟', img: 'assets/game/feed/fish.webp' },
   mushroom: { emoji: '🍄' },
   bee: { emoji: '🐝' },
   crown: { emoji: '👑' },
@@ -75,8 +75,12 @@ const ASSETS = {
   basket: { emoji: '🧺' },
   coin: { emoji: '🪙' },
   ruby: { emoji: '🐱', img: 'assets/game/ruby/ruby-main.webp' },
-  bowl: { emoji: '🥣' },
-  bell: { emoji: '🔔' },
+  ruby_cheer: { emoji: '🐱', img: 'assets/game/ruby/ruby-cheer.webp' },
+  ruby_comfort: { emoji: '🐱', img: 'assets/game/ruby/ruby-comfort.webp' },
+  ruby_eat: { emoji: '🐱', img: 'assets/game/ruby/ruby-eat.webp' },
+  ruby_sleep: { emoji: '🐱', img: 'assets/game/ruby/ruby-sleep.webp' },
+  bowl: { emoji: '🥣', img: 'assets/game/feed/bowl.webp' },
+  bell: { emoji: '🔔', img: 'assets/game/feed/bell.webp' },
 };
 // Legacy sticker saves contain emoji strings. Keep their storage format intact.
 // Aliases (Ruby shares cat's fallback) keep the original sticker id.
