@@ -74,7 +74,7 @@ const ASSETS = {
   arrow: { emoji: '➜' },
   basket: { emoji: '🧺' },
   coin: { emoji: '🪙' },
-  ruby: { emoji: '🐱' },
+  ruby: { emoji: '🐱', img: 'assets/game/ruby/ruby-main.webp' },
   bowl: { emoji: '🥣' },
   bell: { emoji: '🔔' },
 };

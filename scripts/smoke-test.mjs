@@ -25,9 +25,9 @@ for(const id of ids)assert.ok(ASSETS[id],`Unregistered data id: ${id}`);
 for(const it of [...THINGS,...SHOP])assert.equal(ASSETS[it.id].emoji,it.e);
 for(const [id,asset] of Object.entries(ASSETS)){
   assert.match(id,/^[a-z][a-z0-9_]*$/);
-  assert.ok(!asset.img,`Unexpected initial image: ${id}`);
+  if(asset.img)assert.ok(existsSync(new URL('../'+asset.img,import.meta.url)),`Missing image file for ${id}: ${asset.img}`);
   assert.equal(ASSETS[EMOJI_IDS[asset.emoji]].emoji,asset.emoji,'Legacy emoji must map to a matching id');
-  assert.equal(art(id),`<span class="emoji">${asset.emoji}</span>`);
+  if(!asset.img)assert.equal(art(id),`<span class="emoji">${asset.emoji}</span>`);
 }
 for(const [id,emoji] of Object.entries({ruby:'🐱',fish:'🐟',bowl:'🥣',bell:'🔔'}))
   assert.equal(ASSETS[id].emoji,emoji);
