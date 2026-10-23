@@ -1,5 +1,5 @@
 GAMES.color = function(stage,L,done){
-  const nc=[2,2,3,3,3,4,4,4,5,5,6,6,6][Math.min(L,12)],per=L>=4?3:2;
+  const nc=[2,2,3,3,3,4,4,4][Math.min(L,7)],per=L>=4?3:2;
   const cols=pick(COLORS,nc);
   const top=div('row'),bottom=div('row');
   const baskets=cols.map(c=>{
@@ -10,7 +10,7 @@ GAMES.color = function(stage,L,done){
   const balls=shuffle(cols.flatMap(c=>Array(per).fill(c)));
   balls.forEach((c,i)=>{
     const p=div('piece ball');p.style.setProperty('--bc',c.c);p.setAttribute('aria-label',c.n);
-    if(round===0&&diff===1&&i===0)p.classList.add('wiggle');
+    if(round===0&&diff===0&&i===0)p.classList.add('wiggle');
     bottom.append(p);
     hintMoves.push({from:p,to:baskets.find(b=>b.dataset.key===c.k)});
     makeDraggable(p,(el,x,y)=>{
@@ -24,7 +24,6 @@ GAMES.color = function(stage,L,done){
     });
   });
   stage.append(top,bottom);
-  if(L>=8)top.classList.add('color-grid');
   idleHint(()=>hintMoves.find(m=>!m.from.classList.contains('placed')));
-  return ()=>stage.style.setProperty('--s',sizeFor(stage,Math.min(nc*per,4),(L>=8?2.6:1.3)+Math.ceil(nc*per/4)+1.2)+'px');
+  return ()=>stage.style.setProperty('--s',sizeFor(stage,Math.min(nc*per,4),1.3+Math.ceil(nc*per/4)+1.2)+'px');
 };

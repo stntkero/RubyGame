@@ -22,7 +22,7 @@ GAMES.shop = function(stage,L,done){
   shelfItems.forEach(it=>{
     const b=document.createElement('button');b.className='shelf-item';
     b.innerHTML=`${art(it.id)}<span class="ptag">${coinDots(it.p)}<b>${it.p}</b></span>`;
-    if(round===0&&diff===1&&it.id===target?.id)b.classList.add('wiggle');
+    if(round===0&&diff===0&&it.id===target?.id)b.classList.add('wiggle');
     b.addEventListener('click',()=>{
       if(chosen)return;
       b.classList.remove('wiggle');
