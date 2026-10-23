@@ -24,7 +24,7 @@ const ids=[...THINGS,...SHOP].map(it=>it.id).concat([...CHEERS,...SMALL,...RARE]
 for(const id of ids)assert.ok(ASSETS[id],`Unregistered data id: ${id}`);
 for(const it of [...THINGS,...SHOP])assert.equal(ASSETS[it.id].emoji,it.e);
 for(const [id,asset] of Object.entries(ASSETS)){
-  assert.match(id,/^[a-z][a-z0-9]*$/);
+  assert.match(id,/^[a-z][a-z0-9_]*$/);
   assert.ok(!asset.img,`Unexpected initial image: ${id}`);
   assert.equal(ASSETS[EMOJI_IDS[asset.emoji]].emoji,asset.emoji,'Legacy emoji must map to a matching id');
   assert.equal(art(id),`<span class="emoji">${asset.emoji}</span>`);
@@ -36,7 +36,7 @@ assert.ok(scripts.includes('js/games/feed.js'));
 assert.equal([...html.matchAll(/data-game="/g)].length,7);
 assert.match(html,/data-game="feed"/);
 for(const file of ['index.html',...scripts]){
-  for(const m of read(file).matchAll(/(?:data-art="|\bart\(')([a-z0-9]+)(?:"|')/g))
+  for(const m of read(file).matchAll(/(?:data-art="|\bart\(')([a-z0-9_]+)(?:"|')/g))
     assert.ok(ASSETS[m[1]],`Unknown asset ${m[1]} in ${file}`);
 }
 ASSETS.dog.img='assets/img/dog.webp';

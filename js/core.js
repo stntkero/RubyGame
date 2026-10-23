@@ -10,10 +10,13 @@ let stars=store.get('stars',0),soundOn=store.get('sound',true),diff=store.get('d
 
 /* ---------- 聲音 ---------- */
 let ac;
+function getAudioContext(){
+  return ac||(ac=new (window.AudioContext||window.webkitAudioContext)());
+}
 function tone(freq,dur=.15,type='sine',delay=0,vol=.2){
   if(!soundOn)return;
   try{
-    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    ac=getAudioContext();
     if(ac.state==='suspended')ac.resume();
     const t=ac.currentTime+delay,o=ac.createOscillator(),g=ac.createGain();
     o.type=type;o.frequency.setValueAtTime(freq,t);
@@ -27,35 +30,43 @@ const sfx={
   no(){tone(320,.18,'sine',0,.1)},
   win(){[523,659,784,1047].forEach((f,i)=>tone(f,.28,'triangle',i*.12))}
 };
-/* 配音：有預先產生的 mp3（js/voice-map.js）就用 Web Audio 播，沒有或失敗才用手機語音 */
-const getAC=()=>ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+/* 配音：有預先產生的 mp3（js/voice-map.js）就用 Web Audio 播，沒有或失敗才用手機語音；說話時背景音樂自動變小聲 */
+const getAC=getAudioContext;
 const voiceBuf={};let voiceSrc=null,sayId=0;
+const duck=on=>{if(typeof bgmDuck==='function')bgmDuck(on)};
 function loadVoice(f){
   return voiceBuf[f]=voiceBuf[f]||fetch('assets/voice/'+f+'.mp3').then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()})
     .then(b=>new Promise((ok,no)=>getAC().decodeAudioData(b,ok,no))).catch(e=>{delete voiceBuf[f];throw e});
 }
 function stopVoice(){
+  sayId++;
   if(voiceSrc){try{voiceSrc.onended=null;voiceSrc.stop()}catch(e){}voiceSrc=null}
   try{'speechSynthesis' in window&&speechSynthesis.cancel()}catch(e){}
+  duck(false);
 }
-function speak(text){
+const cancelSpeech=stopVoice;
+function speak(text,id){
   if(!('speechSynthesis' in window))return;
-  try{const u=new SpeechSynthesisUtterance(text);u.lang='zh-TW';u.rate=.9;u.pitch=1.3;speechSynthesis.speak(u)}catch(e){}
+  try{
+    const u=new SpeechSynthesisUtterance(text);u.lang='zh-TW';u.rate=.9;u.pitch=1.3;
+    u.onstart=()=>{if(id===sayId)duck(true)};u.onend=u.onerror=()=>{if(id===sayId)duck(false)};
+    speechSynthesis.speak(u);
+  }catch(e){duck(false)}
 }
 function say(text){
   if(!soundOn)return;
   stopVoice();
-  const id=++sayId,f=typeof VOICE_FILES!=='undefined'&&VOICE_FILES[text];
-  if(!f){speak(text);return}
-  try{if(getAC().state==='suspended')ac.resume()}catch(e){speak(text);return}
+  const id=sayId,f=typeof VOICE_FILES!=='undefined'&&VOICE_FILES[text];
+  if(!f){speak(text,id);return}
+  try{if(getAC().state==='suspended')ac.resume()}catch(e){speak(text,id);return}
   loadVoice(f).then(buf=>{
     if(id!==sayId||!soundOn)return;
-    const s=ac.createBufferSource();s.buffer=buf;s.connect(ac.destination);s.start();voiceSrc=s;
-    s.onended=()=>{if(voiceSrc===s)voiceSrc=null};
-  }).catch(()=>{if(id===sayId)speak(text)});
+    const s=ac.createBufferSource();s.buffer=buf;s.connect(ac.destination);s.start();voiceSrc=s;duck(true);
+    s.onended=()=>{if(voiceSrc===s){voiceSrc=null;duck(false)}};
+  }).catch(()=>{if(id===sayId)speak(text,id)});
 }
 // 第一次觸碰時解鎖音訊（iOS 需要），並在背景預先載入所有配音
-addEventListener('pointerdown',()=>{
+document.addEventListener('pointerdown',()=>{
   try{if(getAC().state==='suspended')ac.resume()}catch(e){return}
   if(typeof VOICE_FILES==='undefined')return;
   Object.values(VOICE_FILES).reduce((p,f)=>p.then(()=>loadVoice(f)).catch(()=>{}),Promise.resolve());
