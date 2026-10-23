@@ -40,9 +40,9 @@ for(let piggy=0;piggy<=4;piggy++){
 }
 const {roomRubyTarget,roomRubyDepth,roomIdle}=vm.runInContext('({roomRubyTarget,roomRubyDepth,roomIdle})',ctx);
 const target=(...args)=>JSON.parse(JSON.stringify(roomRubyTarget(...args)));
-assert.deepEqual(target(50,5,20,40),{x:50,y:55},'Wall taps project straight down onto the floor');
+assert.deepEqual(target(50,5,20,40),{x:50,y:74},'Wall taps project straight down onto the floor');
 assert.deepEqual(target(-100,200,20,40),{x:13.4,y:98},'Keep the whole figure inside the left and bottom edges');
-assert.deepEqual(target(200,60,20,40),{x:86.6,y:60});
+assert.deepEqual(target(200,80,20,40),{x:86.6,y:80});
 assert.deepEqual(target(NaN,Infinity,20,40),{x:25,y:92},'Invalid saved coordinates use safe defaults');
 assert.ok(target(50,55,38,80).y>=95,'Short rooms leave room above Ruby and her accessories');
 for(const y of [55,64.2,80,98])assert.equal(roomRubyDepth(y),10+Math.round(y));
@@ -107,7 +107,7 @@ for(const reduced of [false,true]){
     assert.equal(ruby.style.zIndex,context.roomRubyDepth(100-parseFloat(ruby.style.bottom)));
     assert.ok(ruby.classList.contains('room-walking'));advanceFrame(10000);
   }
-  assert.equal(data.rubyPos.x,80);assert.equal(data.rubyPos.y,55);
+  assert.equal(data.rubyPos.x,80);assert.equal(data.rubyPos.y,74);
   assert.equal(ruby.classList.contains('room-walking'),false);
   down(pointer(ruby,400,200));up(pointer(ruby,400,200));
   assert.equal(pops,1);await new Promise(r=>setImmediate(r));assert.equal(ruby.firstElementChild.querySelector().art,'ruby_cheer');

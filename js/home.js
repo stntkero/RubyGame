@@ -29,10 +29,12 @@ function homePlace(state,id,x,y){
 }
 function homeStore(state,id){state.room=state.room.filter(it=>it.id!==id)}
 let homeState,houseTab='wardrobe',shopOpener=null,roomWalker=null;
+// 房間地板從 64% 開始（見 .room-scene 背景），腳至少要在 74% 才會看起來踩在地板上
+const ROOM_FLOOR_MIN=74;
 // x is Ruby's horizontal centre; y is her feet, measured from the top.
 function roomRubyTarget(x,y,width=26,height=40){
   // Leave room for the rotated waddle and accessories above her head.
-  const half=Math.min(49,width*.62+1),top=Math.min(98,Math.max(55,height*1.18+1));
+  const half=Math.min(49,width*.62+1),top=Math.min(98,Math.max(ROOM_FLOOR_MIN,height*1.18+1));
   return {x:Math.max(half,Math.min(100-half,Number.isFinite(x)?x:25)),
     y:Math.max(top,Math.min(98,Number.isFinite(y)?y:92))};
 }
@@ -156,7 +158,7 @@ function walkRoomRuby(scene,ruby,content){
   };
   const idle=roomIdle(()=>{
     if(held.size||document.hidden||!$('#houseShop').hidden){idle.reset();return}
-    walk(Math.random()*100,55+Math.random()*43);idle.reset();
+    walk(Math.random()*100,ROOM_FLOOR_MIN+Math.random()*(98-ROOM_FLOOR_MIN));idle.reset();
   });
   const resize=()=>{
     stop();const w=scene.clientWidth,h=scene.clientHeight;
