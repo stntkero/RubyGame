@@ -135,12 +135,14 @@ for(const L of [0,2,5,9]){
   for(let i=0;i<=needed;i++)pile.children[i].drop(bowl);
   t.pair().tap.click();assert.equal(t.pair().tap,mid.children[1],'Surplus hint removes one fish');
 }
-for(const L of [0,3,4,8]){
-  const t=game('shop',L),[req,shelf,tray]=t.stage.children;
-  const first=t.pair();assert.ok(shelf.children.includes(first.tap));first.tap.click();
-  if(L<4)assert.ok(req.innerHTML.includes(first.tap.innerHTML.match(/^\[[^\]]+\]/)[0]));
-  // 自由購物：買完一樣後只要錢還夠，提示會接著指向下一樣商品，直到錢不夠才結帳
-  let steps=0;while(t.pair()){const p=t.pair();if(p.tap)p.tap.click();else{assert.equal(p.to,tray);assert.equal(p.from.drop(p.to),true)}t.advance(600);assert.ok(++steps<=30)}
+for(const L of [0,2,3,4,8]){
+  const t=game('shop',L),kids=t.stage.children,errand=L<4;
+  const [req,shelf,tray]=errand?kids:[null,...kids];
+  const first=t.pair();assert.ok(shelf.children.includes(first.tap));
+  if(errand)assert.ok(req.innerHTML.includes(first.tap.innerHTML.match(/^\[[^\]]+\]/)[0]));
+  // 先把東西放進購物車（提示會一樣一樣指），結帳後一次投幣付清
+  let steps=0;
+  while(!t.finished()&&steps<40){const p=t.pair();if(p){if(p.tap)p.tap.click();else{assert.equal(p.to,tray);assert.equal(p.from.drop(p.to),true)}}t.advance(1300);steps++}
   t.advance(2500);assert.equal(t.finished(),1);assert.equal(t.wrong(),0);
 }
 for(const L of [0,3,6]){

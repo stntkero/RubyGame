@@ -21,14 +21,16 @@ export function allLines() {
   // 數數（商店付錢念「二」，存錢豬念「兩」以外的 NUMS）
   NUMS.forEach(add); add('二');
   // 商店
-  for (const it of SHOP) {
-    add('要買' + it.n + '喔');
-    add('幫我買' + it.n);
-    add(it.n + '要' + N(it.p) + '個金幣');
-    add(it.n + '要' + N(it.p) + '個金幣，錢不夠喔');
+  // 商店：先選好再一起結帳（任務：加起來付錢）
+  for (const it of SHOP) add(it.n + '要' + N(it.p) + '個金幣');
+  const errandPool = SHOP.filter(it => it.p <= 4);
+  for (const a of errandPool) {
+    add('幫我買' + a.n); add('要買' + a.n + '喔');
+    for (const b of errandPool) if (a !== b) { add('幫我買' + a.n + '和' + b.n); add('要買' + a.n + '和' + b.n + '喔'); }
   }
+  for (let m = 1; m <= 10; m++) add('一共' + N(m) + '個金幣');
+  ['錢不夠喔', '先結帳喔'].forEach(add);
   for (let m = 1; m <= 10; m++) add('你有' + N(m) + '個金幣，想買什麼呢？');
-  for (let m = 1; m <= 9; m++) add('還剩' + N(m) + '個金幣，還想買什麼呢？');
   ['先選要買的東西', '謝謝光臨！'].forEach(add);
   // 存錢豬
   ['星星不夠了，去玩遊戲賺星星吧', '換到一張貼紙', '存滿了！得到超級大獎！'].forEach(add);

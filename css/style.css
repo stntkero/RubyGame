@@ -347,4 +347,14 @@ button.piece{cursor:pointer}
 .ruby-wear.ruby-wear-fit{inset:-11.66%;width:auto;height:auto;transform:none}
 .shop-bag{min-height:calc(var(--s)*.5);gap:4px}
 .shop-bag .art,.shop-bag .emoji{font-size:calc(var(--s)*.45)}
-.shop-checkout[hidden]{display:none}
+.shop-checkout[hidden]{display:flex;visibility:hidden}
+/* 小小商店：購物車＋總價，一次結帳 */
+.shelf-item.in-cart{opacity:.35;transform:scale(.9)}
+.shop-total{display:flex;align-items:center;gap:3px;min-height:calc(var(--s)*.4);font-size:calc(var(--s)*.3)}
+.shop-total:not(:empty){background:var(--paper);border:3px solid var(--ink);border-radius:999px;padding:2px 12px;box-shadow:0 3px 0 var(--ink)}
+.shop-total b{font-weight:400;margin-left:6px}
+.shop-total .coin.sm{width:calc(var(--s)*.22);height:calc(var(--s)*.22)}
+.shelf.shop-closed{opacity:.5;pointer-events:none}
+.tray .coin-slot{width:calc(var(--s)*.45);height:calc(var(--s)*.45)}
+.shop-wallet{align-items:center;background:rgba(255,253,247,.55);border:3px dashed var(--dash);border-radius:24px;padding:8px 10px}
+.shop-wallet .wallet-purse{font-size:calc(var(--s)*.7);margin-right:4px}
