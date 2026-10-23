@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
+import './hints-test.mjs';
 import './feed-test.mjs';
 import './puzzle-test.mjs';
 import './home-test.mjs';

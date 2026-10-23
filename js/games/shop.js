@@ -18,6 +18,7 @@ GAMES.shop = function(stage,L,done){
   const tray=div('tray');tray.innerHTML=art('cart', 'placeholder');
   const wallet=div('row');
   let chosen=null,paid=0;
+  const hintItems=[],coins=[];
   shelfItems.forEach(it=>{
     const b=document.createElement('button');b.className='shelf-item';
     b.innerHTML=`${art(it.id)}<span class="ptag">${coinDots(it.p)}<b>${it.p}</b></span>`;
@@ -31,10 +32,10 @@ GAMES.shop = function(stage,L,done){
       tray.innerHTML=`${art(it.id, 'goods')}`+(showSlots?'<div class="coin-slot"></div>'.repeat(it.p):'');
       say(it.n+'要'+NUMS[it.p-1]+'個金幣');
     });
-    shelf.append(b);
+    shelf.append(b);hintItems.push({el:b,it});
   });
   for(let i=0;i<money;i++){
-    const c=div('piece coin');wallet.append(c);
+    const c=div('piece coin');wallet.append(c);coins.push(c);
     makeDraggable(c,(el,x,y)=>{
       if(!hitTarget([tray],x,y))return false;
       if(!chosen){wrong(shelf);say('先選要買的東西');return false}
@@ -54,5 +55,9 @@ GAMES.shop = function(stage,L,done){
   }
   stage.append(req,shelf,tray,wallet);
   setTimeout(()=>say(errand?'幫我買'+target.n:'你有'+NUMS[money-1]+'個金幣，想買什麼呢？'),250);
+  idleHint(()=>{
+    if(!chosen)return {tap:hintItems.find(({it})=>errand?it.id===target.id:it.p<=money)?.el};
+    if(paid<chosen.p)return {from:coins.find(c=>!c.classList.contains('placed')),to:tray};
+  });
   return ()=>stage.style.setProperty('--s',sizeFor(stage,4,4.4+Math.ceil(money/4)*.9)+'px');
 };

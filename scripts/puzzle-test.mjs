@@ -41,7 +41,7 @@ function setup(L){
   const stage=new Element(),timers=[],errors=[];
   let completed=0,oks=0,buzzes=0;
   const ctx=vm.createContext({
-    GAMES:{},ASSETS:{ruby:{img:'ruby.webp'},cat:{emoji:'🐱'}},PUZZLES:['ruby'],
+    GAMES:{},idleHint(){},ASSETS:{ruby:{img:'ruby.webp'},cat:{emoji:'🐱'}},PUZZLES:['ruby'],
     pick:a=>a.slice(0,1),shuffle:a=>a.slice().reverse(),div:cls=>new Element(cls),
     round:0,diff:0,makeDraggable:(el,drop)=>{el.drop=(x,y)=>drop(el,x,y)},
     wrong:el=>errors.push(el),sfx:{ok:()=>oks++},buzz:ms=>{assert.equal(ms,30);buzzes++},

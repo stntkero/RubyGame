@@ -9,7 +9,7 @@ GAMES.pattern = function(stage,L,done){
   const seq=div('seq');
   for(let i=0;i<t;i++){const c=div('cell');c.innerHTML=`${art(map[tpl[i%len]].id)}`;seq.append(c)}
   const q=div('cell q');q.textContent='?';seq.append(q);
-  const opts=div('row');let finished=false;
+  const opts=div('row');let finished=false,correct;
   shuffle([...letters.map(l=>map[l]),items[letters.length]]).forEach(it=>{
     const b=document.createElement('button');b.className='piece';b.innerHTML=`${art(it.id)}`;
     b.addEventListener('click',()=>{
@@ -18,9 +18,10 @@ GAMES.pattern = function(stage,L,done){
       finished=true;q.textContent='';q.innerHTML=`${art(it.id)}`;q.classList.add('filled');
       b.style.visibility='hidden';sfx.ok();buzz(30);say(it.n);setTimeout(done,700);
     });
-    opts.append(b);
+    opts.append(b);if(it.id===answer.id)correct=b;
   });
   stage.append(seq,opts);
+  idleHint(()=>!finished&&{tap:correct});
   return ()=>{
     const N=t+1,W=stage.clientWidth-24,H=stage.clientHeight-24;
     const per=Math.min(N,6),rows=Math.ceil(N/per);
