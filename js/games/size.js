@@ -1,5 +1,5 @@
 GAMES.size = function(stage,L,done){
-  const n=L<2?3:L<5?4:5,hint=L<4;
+  const n=L<2?3:L<5?4:L<8?5:L<10?6:7,hint=L<4;
   const it=pick(THINGS,1)[0];
   const k=i=>(.4+.6*i/(n-1)).toFixed(2);
   const bar=div('scale-hint');

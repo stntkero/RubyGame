@@ -1,5 +1,5 @@
 GAMES.memory = function(stage,L,done){
-  const pairs=[2,3,3,4,4,5,6,6][Math.min(L,7)];
+  const pairs=[2,3,3,4,4,5,6,6,7,7,8,8][Math.min(L,11)];
   const faces=pick(THINGS,pairs);
   const deck=shuffle([...faces,...faces]);
   const grid=div('grid');
@@ -32,7 +32,7 @@ GAMES.memory = function(stage,L,done){
   return ()=>{
     const N=deck.length,W=stage.clientWidth-24,H=stage.clientHeight-24,g=12;
     let best=60,bestCols=2;
-    [2,3,4,5].filter(c=>N%c===0).forEach(cols=>{
+    [2,3,4,5,6,7].filter(c=>N%c===0).forEach(cols=>{
       const rows=N/cols,s=Math.min((W-g*(cols-1))/cols,(H-g*(rows-1))/rows,170);
       if(s>best){best=s;bestCols=cols}
     });

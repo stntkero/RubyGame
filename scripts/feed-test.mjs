@@ -27,7 +27,7 @@ function setup(L,random){
     GAMES:{},idleHint(){},document:{createElement:()=>new Element()},
     div:cls=>Object.assign(new Element(),{className:cls}),
     art:id=>`<span>${id}</span>`,
-    NUMS:['一','兩','三','四','五','六','七'],say:text=>spoken.push(text),
+    NUMS:['一','兩','三','四','五','六','七','八','九','十'],say:text=>spoken.push(text),
     sfx:{ok(){},pop(){}},tone(){},buzz(){},sizeFor:()=>77,
     hitTarget:(_targets,x)=>x===1,
     makeDraggable:(el,drop)=>{el.drop=(hit=true)=>{
@@ -55,18 +55,18 @@ function setup(L,random){
 }
 for(const L of [0,1,2,4,5,9])for(const random of [0,.25,.5,.999999]){
   const t=setup(L,random),guided=L<5;
-  assert.ok(t.needed>=(L<2?1:L<5?2:3)&&t.needed<=(L<2?3:5));
+  assert.ok(t.needed>=(L<2?1:L<5?2:L<8?3:5)&&t.needed<=(L<2?3:L<5?5:L<8?7:10));
   assert.ok(t.pile.children.length>t.needed&&t.pile.children.length<=t.needed+3);
   assert.equal(t.bowlFish.children.length,L<2?t.needed:0);
   t.advance(1000);
-  assert.match(t.spoken.at(-1),/^露比想吃[一兩三四五]條魚/);
+  assert.match(t.spoken.at(-1),/^露比想吃[一兩三四五六七八九十]條魚/);
   assert.equal(t.pile.children[0].drop(false),false,'Missed bowl must not consume fish');
   if(!guided){
     t.ruby.click();assert.match(t.spoken.at(-1),/^還要再/);
   }
   for(let i=0;i<t.needed;i++)assert.equal(t.pile.children[i].drop(),true);
   assert.equal(t.pile.children[0].drop(),false,'One piece cannot be counted twice');
-  assert.equal(t.spoken.at(-1),['一','二','三','四','五'][t.needed-1]);
+  assert.equal(t.spoken.at(-1),['一','二','三','四','五','六','七','八','九','十'][t.needed-1]);
   if(guided){
     assert.equal(t.pile.children[t.needed].drop(),false,'Auto-complete must lock immediately');
   }else{
@@ -86,8 +86,8 @@ for(const L of [0,1,2,4,5,9])for(const random of [0,.25,.5,.999999]){
 }
 const eight=setup(5,.999999);
 eight.pile.children.forEach(fish=>fish.drop());
-assert.equal(eight.spoken.at(-1),'八','All eight surplus fish can be counted');
-assert.equal(eight.bowlFish.children.length,8);
+assert.equal(eight.spoken.at(-1),'十','All surplus fish (up to ten) can be counted');
+assert.equal(eight.bowlFish.children.length,10);
 const stale=setup(0,0);
 stale.pile.children[0].drop();stale.root.isConnected=false;stale.advance(5000);
 assert.equal(stale.completed(),0,'Leaving the game cancels pending completion');

@@ -1,6 +1,6 @@
 // Row-major cells; the square picture is divided into columns and rows.
 function puzzleLayout(L){
-  const cols=L<2?2:L<4?3:2,rows=L<4?1:L<6?2:3;
+  const cols=L<2?2:L<4?3:L<8?2:3,rows=L<4?1:L<6?2:L<10?3:4;
   return {cols,rows,count:cols*rows,ghost:L<6};
 }
 function puzzleCell(layout,rect,x,y,pad=24){

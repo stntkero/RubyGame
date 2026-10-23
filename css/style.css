@@ -345,3 +345,6 @@ button.piece{cursor:pointer}
 .room-object.in-room{--object-size:calc(var(--ruby-w,100px)*var(--k,1))}
 /* 配件圖層四周比露比多留 11.66%（見 tools/img/build.mjs 的 FIT_PAD） */
 .ruby-wear.ruby-wear-fit{inset:-11.66%;width:auto;height:auto;transform:none}
+.shop-bag{min-height:calc(var(--s)*.5);gap:4px}
+.shop-bag .art,.shop-bag .emoji{font-size:calc(var(--s)*.45)}
+.shop-checkout[hidden]{display:none}

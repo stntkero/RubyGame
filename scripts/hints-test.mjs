@@ -31,7 +31,7 @@ function clock(){
     advance(ms){const end=now+ms;while(true){const next=[...timers].sort((a,b)=>a[1].at-b[1].at)[0];if(!next||next[1].at>end)break;timers.delete(next[0]);now=next[1].at;next[1].fn()}now=end}};
 }
 const core=read('js/core.js'),hintCode=core.slice(core.indexOf('// Hints demonstrate'),core.indexOf('let comfortPeek='));
-function setup(diff=0,reduceMotion=false){
+function setup(diff=1,reduceMotion=false){
   const time=clock(),stage=new Element(),body=new Element(),observers=[];
   stage.append(new Element());
   const ctx=vm.createContext({...time,stage,diff,reduceMotion,gen:1,document:{body},
@@ -42,7 +42,7 @@ function setup(diff=0,reduceMotion=false){
   vm.runInContext(hintCode,ctx);
   return {ctx,stage,body,observers,...time};
 }
-for(const diff of [0,1]){
+for(const diff of [1]){ // 只有「普通」有示範
   const t=setup(diff);let calls=0;
   const from=t.stage.firstElementChild,to=new Element();
   const stop=t.ctx.idleHint(()=>{calls++;return {from,to}});
@@ -90,7 +90,7 @@ for(const reduced of [false,true]){
 }
 function game(name,L,random=.4){
   const stage=new Element(),time=clock();let getPair,finished=0,wrong=0;
-  const ctx=vm.createContext({...time,GAMES:{},round:0,diff:0,
+  const ctx=vm.createContext({...time,GAMES:{},round:0,diff:1,
     Math:Object.assign(Object.create(Math),{random:()=>random}),
     document:{createElement:()=>new Element()},div:c=>new Element(c),
     idleHint:fn=>{getPair=fn},art:id=>`[${id}]`,pick:(a,n)=>a.slice(0,n),shuffle:a=>a.slice().reverse(),
@@ -139,7 +139,8 @@ for(const L of [0,3,4,8]){
   const t=game('shop',L),[req,shelf,tray]=t.stage.children;
   const first=t.pair();assert.ok(shelf.children.includes(first.tap));first.tap.click();
   if(L<4)assert.ok(req.innerHTML.includes(first.tap.innerHTML.match(/^\[[^\]]+\]/)[0]));
-  let coins=0;while(t.pair()){const p=t.pair();assert.equal(p.to,tray);assert.equal(p.from.drop(p.to),true);assert.ok(++coins<=5)}
+  // 自由購物：買完一樣後只要錢還夠，提示會接著指向下一樣商品，直到錢不夠才結帳
+  let steps=0;while(t.pair()){const p=t.pair();if(p.tap)p.tap.click();else{assert.equal(p.to,tray);assert.equal(p.from.drop(p.to),true)}t.advance(600);assert.ok(++steps<=30)}
   t.advance(2500);assert.equal(t.finished(),1);assert.equal(t.wrong(),0);
 }
 for(const L of [0,3,6]){

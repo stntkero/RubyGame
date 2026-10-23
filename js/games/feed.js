@@ -1,6 +1,7 @@
 GAMES.feed = function(stage,L,done){
-  const showSlots=L<5,guides=L<2,min=L<2?1:L<5?2:3;
-  const needed=min+Math.floor(Math.random()*((L<2?3:5)-min+1));
+  // 數到 10：普通 1～5、挑戰 3～7、超級挑戰 5～10
+  const showSlots=L<5,guides=L<2,min=L<2?1:L<5?2:L<8?3:5,max=L<2?3:L<5?5:L<8?7:10;
+  const needed=min+Math.floor(Math.random()*(max-min+1));
   const total=needed+1+Math.floor(Math.random()*3);
   const root=div('feed-game'),top=div('feed-top');
   const ruby=document.createElement('button');
@@ -86,5 +87,7 @@ GAMES.feed = function(stage,L,done){
     if(!showSlots&&fed.length>needed)return {tap:bowlFish.firstElementChild};
     return {from:fish.find(f=>!f.classList.contains('placed')),to:bowl};
   });
-  return ()=>root.style.setProperty('--s',sizeFor(stage,4,6.2)+'px');
+  // 魚多的時候（超級挑戰最多 13 條）一排放 5 條
+  const pileCols=total>8?5:4;pile.style.gridTemplateColumns=`repeat(${pileCols},var(--s))`;
+  return ()=>root.style.setProperty('--s',sizeFor(stage,pileCols,4.2+Math.ceil(total/pileCols))+'px');
 };

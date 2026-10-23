@@ -7,6 +7,8 @@ const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let stars=store.get('stars',0),soundOn=store.get('sound',true),diff=store.get('diff',1);
+// 難度只剩 普通1／挑戰2／超級挑戰3；舊存檔的「簡單」0 改成普通
+if(![1,2,3].includes(diff)){diff=1;store.set('diff',diff)}
 
 /* ---------- 聲音 ---------- */
 let ac;
@@ -125,7 +127,7 @@ function hintDrag(fromEl,toEl){
 }
 function hintTap(el){return hintDrag(el,el)}
 function idleHint(getPair,{first=5000,every=8000}={}){
-  if(diff!==0&&diff!==1)return ()=>{};
+  if(diff!==1)return ()=>{};
   const g=gen,anchor=stage.firstElementChild;
   let timer=0,animation=()=>{},stopped=false;
   const valid=()=>g===gen&&stage.isConnected&&anchor?.isConnected;
@@ -134,7 +136,7 @@ function idleHint(getPair,{first=5000,every=8000}={}){
     stage.removeEventListener('pointerdown',reset,true);observer.disconnect();hintStops.delete(stop);
   };
   const play=()=>{
-    if(!valid()||(diff!==0&&diff!==1)){stop();return}
+    if(!valid()||(diff!==1)){stop();return}
     const pair=getPair();animation();
     if(pair)animation=pair.tap?hintTap(pair.tap):hintDrag(pair.from,pair.to);
     timer=setTimeout(play,every);

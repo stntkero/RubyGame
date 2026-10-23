@@ -1,5 +1,5 @@
 GAMES.pattern = function(stage,L,done){
-  const tpls=L<2?['AB']:L<4?['AB','AAB','ABB']:L<6?['AAB','ABB','ABC','AABB']:['ABC','AABB','AABC','ABBC'];
+  const tpls=L<2?['AB']:L<4?['AB','AAB','ABB']:L<6?['AAB','ABB','ABC','AABB']:L<8?['ABC','AABB','AABC','ABBC']:['ABCD','AABC','ABAC','AABBC','ABCC'];
   const tpl=pick(tpls,1)[0],len=tpl.length;
   const letters=[...new Set(tpl)];
   const items=pick(THINGS,letters.length+1);

@@ -9,7 +9,7 @@ const {puzzleLayout,puzzleCell}=context;
 const rect={left:40,top:80,right:340,bottom:380,width:300,height:300};
 for(const [level,cols,rows,ghost] of [
   [0,2,1,true],[1,2,1,true],[2,3,1,true],[3,3,1,true],
-  [4,2,2,true],[5,2,2,true],[6,2,3,false],[7,2,3,false],[50,2,3,false]
+  [4,2,2,true],[5,2,2,true],[6,2,3,false],[7,2,3,false],[8,3,3,false],[9,3,3,false],[10,3,4,false],[50,3,4,false]
 ]){
   const layout=puzzleLayout(level);
   assert.deepEqual({...layout},{cols,rows,count:cols*rows,ghost});

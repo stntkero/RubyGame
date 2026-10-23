@@ -1,5 +1,5 @@
 // Before every deploy run: node scripts/bump-sw.mjs
-const SW_VERSION = '20261023T065517348Z';
+const SW_VERSION = '20261023T072337634Z';
 const CACHE_PREFIX = 'ruby-pwa-';
 const CACHE_NAME = CACHE_PREFIX + SW_VERSION;
 const APP_SHELL = [
