@@ -68,7 +68,7 @@ assert.match(html,/data-game="feed"/);
 assert.ok(scripts.includes('js/games/puzzle.js'));
 assert.match(html,/data-game="puzzle"/);
 assert.equal(ASSETS.puzzle.emoji,'🧩');
-assert.deepEqual(Array.from(PUZZLES),['ruby']);
+assert.ok(PUZZLES.length>=1&&PUZZLES.every(id=>ASSETS[id]&&ASSETS[id].img),'Every puzzle needs an image');
 assert.match(read('js/main.js'),/puzzle:'把拼圖拼起來'/);
 const gamesContext=vm.createContext({GAMES:{}});
 for(const script of scripts.filter(p=>p.startsWith('js/games/')))vm.runInContext(read(script),gamesContext);

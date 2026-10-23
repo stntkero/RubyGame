@@ -1,4 +1,4 @@
-const PUZZLES=['ruby'];
+const PUZZLES=['ruby','ruby_cheer','ruby_eat','panda','lion','unicorn','elephant','fire_truck','helicopter','whale','turtle','strawberry'];
 const THINGS=[
   {id:'fire_truck',e:'🚒',n:'消防車'},{id:'ambulance',e:'🚑',n:'救護車'},
   {id:'police_car',e:'🚓',n:'警車'},{id:'helicopter',e:'🚁',n:'直升機'},
