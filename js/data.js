@@ -30,7 +30,7 @@ const WEARABLES=[
   {id:'scarf',n:'圍巾',slot:'neck',tier:'small',anchor:{x:43,y:69,size:33,rot:8}}
 ];
 // 配件「穿在身上」的圖層：跟露比主圖完全對齊的透明圖（有的話優先用，沒有才用 anchor 貼小圖）
-const WEAR_FIT={};
+const WEAR_FIT=Object.fromEntries(['royal_crown','flower_crown','party_hat','pink_bow','star_clip','glasses','scarf','cape'].map(id=>[id,'assets/game/wear-fit/'+id+'.webp']));
 // k：放進房間時的大小（以露比的高度為 1）
 const ROOM_ITEMS=[
   {id:'room_bed',n:'床',tier:'large',k:1.45},{id:'room_rug',n:'地毯',tier:'medium',k:1.6},

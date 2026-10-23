@@ -82,7 +82,7 @@ function renderHouse(){
   if(houseTab==='wardrobe'){
     const preview=div('wardrobe-preview'),ruby=rubyFigure('wardrobe-ruby');ruby.id='wardrobeRuby';
     // 點露比身上的配件就直接拿下來
-    ruby.addEventListener('click',e=>{const l=e.target.closest('[data-wear]');if(!l)return;homeWear(homeState,l.dataset.wear);saveHome();sfx.pop();renderHouse();rubyBounce($('#wardrobeRuby'))});preview.append(ruby);content.append(preview);
+    ruby.addEventListener('click',e=>{const id=wearAt(ruby,e.clientX,e.clientY);if(!id)return;homeWear(homeState,id);saveHome();sfx.pop();renderHouse();rubyBounce($('#wardrobeRuby'))});preview.append(ruby);content.append(preview);
     const grid=div('wardrobe-grid');WEARABLES.forEach(it=>grid.append(homeItemButton(it)));content.append(grid);
   }else if(houseTab==='room')renderRoom(content);
   else{
@@ -110,6 +110,21 @@ function renderRoom(content){
     roomDraggable(b,it.id,scene,tray);
   });content.append(scene,tray);
   roomWalker=walkRoomRuby(scene,ruby,content);
+}
+// 找出手指點到的是哪件配件：「穿在身上」的圖層蓋住整隻露比，所以要看該點的圖片是不是透明的
+const wearHitCache=new Map();
+function wearAt(figure,x,y){
+  const layers=[...figure.querySelectorAll('[data-wear]')].reverse();
+  for(const l of layers){
+    const img=l.querySelector('img'),r=l.getBoundingClientRect();
+    if(x<r.left||x>r.right||y<r.top||y>r.bottom)continue;
+    if(!l.classList.contains('ruby-wear-fit')||!img||!img.naturalWidth)return l.dataset.wear;
+    let c=wearHitCache.get(img.src);
+    if(!c){c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);wearHitCache.set(img.src,c)}
+    const px=Math.floor((x-r.left)/r.width*c.width),py=Math.floor((y-r.top)/r.height*c.height);
+    try{if(c.getContext('2d').getImageData(px,py,1,1).data[3]>40)return l.dataset.wear}catch(_){return l.dataset.wear}
+  }
+  return null;
 }
 function walkRoomRuby(scene,ruby,content){
   // The outer figure moves/faces; the inner figure animates all worn layers together.
@@ -141,7 +156,8 @@ function walkRoomRuby(scene,ruby,content){
   const walk=(x,y)=>{
     stop();clearCheer();
     const from={...pos},to=roomRubyTarget(x,y,size.w,size.h);
-    ruby.style.setProperty('--room-facing',to.x<from.x?-1:1);
+    // 露比的原圖是朝畫面左邊：往左走維持原圖，往右走才左右翻面
+    ruby.style.setProperty('--room-facing',to.x<from.x?1:-1);
     const duration=Math.max(400,Math.hypot(to.x-from.x,(to.y-from.y)*size.ratio)/22*1000);
     ruby.classList.add('room-walking');let start=null;
     const tick=now=>{

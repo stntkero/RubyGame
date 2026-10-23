@@ -325,7 +325,7 @@ button.piece{cursor:pointer}
   64%,100%{opacity:0;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%)}
 }
 .piece.puzzle-tile.dragging{box-shadow:none}
-.wardrobe-ruby .ruby-wear{pointer-events:auto;cursor:pointer}
+.wardrobe-ruby{pointer-events:auto;cursor:pointer}
 /* 背景插圖（任務 17）：首頁草地、遊戲畫面淡天空；深色模式用夜晚草地 */
 #home{background:url(../assets/game/bg/home-portrait.webp) center bottom/cover no-repeat}
 #game,#house{background:url(../assets/game/bg/game-portrait.webp) center/cover no-repeat}
@@ -343,4 +343,5 @@ button.piece{cursor:pointer}
 }
 .parent-tip{background:var(--paper);border-radius:12px;padding:4px 10px;opacity:.85}
 .room-object.in-room{--object-size:calc(var(--ruby-w,100px)*var(--k,1))}
-.ruby-wear.ruby-wear-fit{inset:0;width:100%;height:100%;transform:none}
+/* 配件圖層四周比露比多留 11.66%（見 tools/img/build.mjs 的 FIT_PAD） */
+.ruby-wear.ruby-wear-fit{inset:-11.66%;width:auto;height:auto;transform:none}
