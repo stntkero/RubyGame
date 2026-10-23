@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 import './feed-test.mjs';
+import './puzzle-test.mjs';
 
 const root=new URL('../',import.meta.url);
 const read=p=>readFileSync(new URL(p,root),'utf8');
@@ -18,9 +19,9 @@ assert.ok(!/type="module"|manifest\.json|apple-touch-icon\.png/.test(html));
 
 const context=vm.createContext({});
 vm.runInContext(read('js/assets.js')+'\n'+read('js/data.js'),context);
-const result=vm.runInContext('({ASSETS,THINGS,SHOP,CHEERS,SMALL,RARE,EMOJI_IDS,art})',context);
-const {ASSETS,THINGS,SHOP,CHEERS,SMALL,RARE,EMOJI_IDS,art}=result;
-const ids=[...THINGS,...SHOP].map(it=>it.id).concat([...CHEERS,...SMALL,...RARE]);
+const result=vm.runInContext('({ASSETS,THINGS,SHOP,CHEERS,SMALL,RARE,PUZZLES,EMOJI_IDS,art})',context);
+const {ASSETS,THINGS,SHOP,CHEERS,SMALL,RARE,PUZZLES,EMOJI_IDS,art}=result;
+const ids=[...THINGS,...SHOP].map(it=>it.id).concat([...CHEERS,...SMALL,...RARE,...PUZZLES]);
 for(const id of ids)assert.ok(ASSETS[id],`Unregistered data id: ${id}`);
 for(const it of [...THINGS,...SHOP])assert.equal(ASSETS[it.id].emoji,it.e);
 for(const [id,asset] of Object.entries(ASSETS)){
@@ -33,8 +34,17 @@ for(const [id,emoji] of Object.entries({ruby:'🐱',fish:'🐟',bowl:'🥣',bell
   assert.equal(ASSETS[id].emoji,emoji);
 assert.equal(EMOJI_IDS['🐱'],'cat','Ruby fallback must preserve legacy cat stickers');
 assert.ok(scripts.includes('js/games/feed.js'));
-assert.equal([...html.matchAll(/data-game="/g)].length,7);
+assert.equal([...html.matchAll(/data-game="/g)].length,8);
 assert.match(html,/data-game="feed"/);
+assert.ok(scripts.includes('js/games/puzzle.js'));
+assert.match(html,/data-game="puzzle"/);
+assert.equal(ASSETS.puzzle.emoji,'🧩');
+assert.deepEqual(Array.from(PUZZLES),['ruby']);
+assert.match(read('js/main.js'),/puzzle:'把拼圖拼起來'/);
+const gamesContext=vm.createContext({GAMES:{}});
+for(const script of scripts.filter(p=>p.startsWith('js/games/')))vm.runInContext(read(script),gamesContext);
+for(const [,game] of html.matchAll(/data-game="([a-z]+)"/g))
+  assert.equal(typeof gamesContext.GAMES[game],'function',`Unregistered game: ${game}`);
 for(const file of ['index.html',...scripts]){
   for(const m of read(file).matchAll(/(?:data-art="|\bart\(')([a-z0-9_]+)(?:"|')/g))
     assert.ok(ASSETS[m[1]],`Unknown asset ${m[1]} in ${file}`);

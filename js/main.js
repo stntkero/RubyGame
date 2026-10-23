@@ -1,7 +1,7 @@
 renderStaticArt();
 
 const PROMPTS={shadow:'幫它們找到影子',memory:'找出一樣的兩張',color:'把球放進一樣顏色的籃子',
-  shop:'',feed:'餵露比吃魚',pattern:'下一個是什麼呢？',size:'從小排到大'};
+  puzzle:'把拼圖拼起來',shop:'',feed:'餵露比吃魚',pattern:'下一個是什麼呢？',size:'從小排到大'};
 const PROMPT_EVERY_ROUND={pattern:1,size:1};
 
 /* ---------- 流程 ---------- */
