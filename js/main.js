@@ -7,7 +7,7 @@ const PROMPT_EVERY_ROUND={pattern:1,size:1};
 /* ---------- 流程 ---------- */
 const stage=$('#stage');
 let current=null,round=0,gen=0,relayout=null;
-function show(id){['home','game','house'].forEach(x=>$('#'+x).hidden=x!==id)}
+function show(id){['home','game','house'].forEach(x=>$('#'+x).hidden=x!==id);resetHomeRubyIdle()}
 function renderProgress(){
   const p=$('#progress');p.innerHTML='';
   for(let i=0;i<5;i++){const d=document.createElement('i');if(i<round%5)d.className='on';p.append(d)}
@@ -26,12 +26,12 @@ function roundDone(){
   setTimeout(()=>{
     if(g!==gen)return;
     sfx.win();say(pick(PRAISE,1)[0]);
-    cheer(big?'trophy':pick(CHEERS,1)[0],big);
+    cheer(big);
     setTimeout(()=>{$('#cheer').hidden=true;if(g===gen)nextRound()},big?2600:1800);
   },500);
 }
-function cheer(id,big){
-  const el=$('#cheerEmoji');el.innerHTML=art(id);
+function cheer(big){
+  const el=$('#cheerEmoji');el.innerHTML=art('ruby_cheer')+(big?art('trophy','cheer-trophy'):'');
   $('#cheer').hidden=false;el.style.animation='none';void el.offsetWidth;el.style.animation='';
   if(!reduceMotion)confetti(big?160:70);
 }
@@ -57,3 +57,11 @@ function paintDiff(){diffBtns.forEach(b=>b.setAttribute('aria-pressed',String(+b
 diffBtns.forEach(b=>b.addEventListener('click',()=>{diff=+b.dataset.diff;store.set('diff',diff);paintDiff();sfx.pop()}));
 paintDiff();
 initRubyHome();
+resetHomeRubyIdle();
+
+// Waiting workers activate after the old app closes; never reload a running game.
+if(location.protocol.startsWith('http')&&'serviceWorker' in navigator){
+  addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(error=>console.warn('Offline setup failed:',error));
+  },{once:true});
+}

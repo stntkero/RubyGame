@@ -9,5 +9,22 @@ function rubyFigure(extraClass=''){
   });
   return figure;
 }
-function rubyBounce(el){el.classList.remove('ruby-bounce');void el.offsetWidth;el.classList.add('ruby-bounce')}
-function paintHomeRuby(){const b=$('#homeRuby');b.replaceChildren(rubyFigure())}
+function rubyBounce(el){if(reduceMotion)return;el.classList.remove('ruby-bounce');void el.offsetWidth;el.classList.add('ruby-bounce')}
+let homeRubySleeping=false,homeRubyIdleTimer=0;
+function paintHomeRuby(){
+  const b=$('#homeRuby');
+  if(homeRubySleeping)b.innerHTML=art('ruby_sleep','home-ruby-sleep');
+  else b.replaceChildren(rubyFigure());
+}
+function resetHomeRubyIdle(){
+  clearTimeout(homeRubyIdleTimer);homeRubyIdleTimer=0;
+  if(homeRubySleeping){homeRubySleeping=false;paintHomeRuby();rubyBounce($('#homeRuby').firstElementChild)}
+  if(!$('#home').hidden){
+    homeRubyIdleTimer=setTimeout(()=>{
+      homeRubyIdleTimer=0;
+      if($('#home').hidden)return;
+      homeRubySleeping=true;paintHomeRuby();
+    },60000);
+  }
+}
+['pointerdown','pointermove','pointerup'].forEach(type=>document.addEventListener(type,resetHomeRubyIdle,{passive:true,capture:true}));
