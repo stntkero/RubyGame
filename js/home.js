@@ -18,7 +18,8 @@ function homeBuy(state,id){
 function homeWear(state,id){
   const it=WEARABLES.find(it=>it.id===id);
   if(!it||!state.owned.includes(id))return false;
-  if(state.worn[it.slot]===id)delete state.worn[it.slot];else state.worn[it.slot]=id;
+  // 配件不限數量：worn 以 id 記錄（舊存檔的 {slot:id} 在讀取時轉換）
+  if(state.worn[id])delete state.worn[id];else state.worn[id]=true;
   return true;
 }
 function homePlace(state,id,x,y){
@@ -44,7 +45,7 @@ function homeItemButton(it,shop=false){
   b.className='home-item';b.dataset.item=it.id;
   b.setAttribute('aria-label',it.n+(owned?'，已擁有':`，${homePrice(it.id)}顆星星`));
   b.innerHTML=art(it.id)+(owned?'<span class="owned-mark" aria-hidden="true">✓</span>':homePriceTag(it.id));
-  if(!shop){b.setAttribute('aria-pressed',String(homeState.worn[it.slot]===it.id))}
+  if(!shop){b.setAttribute('aria-pressed',String(!!homeState.worn[it.id]))}
   b.addEventListener('click',()=>{
     if(shop){
       if(owned){sfx.pop();return}
@@ -60,7 +61,9 @@ function renderHouse(){
   document.querySelectorAll('[data-house-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.houseTab===houseTab)));
   const content=$('#houseContent');content.replaceChildren();
   if(houseTab==='wardrobe'){
-    const preview=div('wardrobe-preview'),ruby=rubyFigure('wardrobe-ruby');ruby.id='wardrobeRuby';preview.append(ruby);content.append(preview);
+    const preview=div('wardrobe-preview'),ruby=rubyFigure('wardrobe-ruby');ruby.id='wardrobeRuby';
+    // 點露比身上的配件就直接拿下來
+    ruby.addEventListener('click',e=>{const l=e.target.closest('[data-wear]');if(!l)return;homeWear(homeState,l.dataset.wear);saveHome();sfx.pop();renderHouse();rubyBounce($('#wardrobeRuby'))});preview.append(ruby);content.append(preview);
     const grid=div('wardrobe-grid');WEARABLES.forEach(it=>grid.append(homeItemButton(it)));content.append(grid);
   }else if(houseTab==='room')renderRoom(content);
   else{
@@ -97,13 +100,18 @@ function positionRoomObject(b,p){
 }
 function roomDraggable(b,id,scene,tray){
   b.addEventListener('pointerdown',e=>{
-    if(e.button!==0)return;e.preventDefault();b.setPointerCapture(e.pointerId);sfx.pop();
-    const rect=b.getBoundingClientRect(),sx=e.clientX,sy=e.clientY;
+    if(e.button!==0)return;e.preventDefault();sfx.pop();
+    const rect=b.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,wasInRoom=b.classList.contains('in-room');
     b.classList.add('room-dragging');
+    // 拖曳時移到最上層，才不會被下方的收納盒蓋住
+    document.body.append(b);try{b.setPointerCapture(e.pointerId)}catch(_){}
     b.style.position='fixed';b.style.left=rect.left+'px';b.style.top=rect.top+'px';b.style.transform='none';
     const move=ev=>{b.style.left=rect.left+ev.clientX-sx+'px';b.style.top=rect.top+ev.clientY-sy+'px'};
     const finish=ev=>{
       b.removeEventListener('pointermove',move);b.removeEventListener('pointerup',finish);b.removeEventListener('pointercancel',finish);b.removeEventListener('lostpointercapture',cancel);
+      b.remove();
+      const tap=ev.type!=='pointercancel'&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<8;
+      if(tap&&wasInRoom){homeStore(homeState,id);saveHome();sfx.pop();renderHouse();return}
       if(ev.type!=='pointercancel'){
         const r=scene.getBoundingClientRect(),t=tray.getBoundingClientRect();
         if(ev.clientX>=t.left&&ev.clientX<=t.right&&ev.clientY>=t.top&&ev.clientY<=t.bottom)homeStore(homeState,id);
@@ -135,7 +143,7 @@ function initRubyHome(){
   stars=migrateHome(store,stars);
   const owned=store.get('owned',[]),worn=store.get('worn',{}),room=store.get('room',[]);
   homeState={stars,owned:Array.isArray(owned)?[...new Set(owned.filter(id=>homeItem(id)))]:[],worn:{},room:[]};
-  WEARABLES.forEach(it=>{if(worn&&worn[it.slot]===it.id&&homeState.owned.includes(it.id))homeState.worn[it.slot]=it.id});
+  WEARABLES.forEach(it=>{if(worn&&(worn[it.id]===true||worn[it.slot]===it.id)&&homeState.owned.includes(it.id))homeState.worn[it.id]=true});
   if(Array.isArray(room))room.forEach(p=>{if(p)homePlace(homeState,p.id,p.x,p.y)});
   const icons={wardrobe:'wardrobe',room:'room_tab',stickers:'sticker_album'},labels={wardrobe:'衣櫃',room:'房間',stickers:'貼紙'};
   document.querySelectorAll('[data-house-tab]').forEach(b=>{

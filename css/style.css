@@ -318,3 +318,4 @@ button.piece{cursor:pointer}
   64%,100%{opacity:0;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%)}
 }
 .piece.puzzle-tile.dragging{box-shadow:none}
+.wardrobe-ruby .ruby-wear{pointer-events:auto;cursor:pointer}

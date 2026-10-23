@@ -17,10 +17,10 @@ for(const it of [...WEARABLES,...ROOM_ITEMS]){
 const state={stars:100,owned:[],worn:{},room:[]};
 assert.equal(homeWear(state,'glasses'),false);assert.equal(homePlace(state,'room_bed',50,50),false);
 for(const it of WEARABLES){
-  homeBuy(state,it.id);assert.equal(homeWear(state,it.id),true);assert.equal(state.worn[it.slot],it.id);
-  homeWear(state,it.id);assert.equal(state.worn[it.slot],undefined);homeWear(state,it.id);
+  homeBuy(state,it.id);assert.equal(homeWear(state,it.id),true);assert.equal(state.worn[it.id],true);
+  homeWear(state,it.id);assert.equal(state.worn[it.id],undefined);homeWear(state,it.id);
 }
-assert.equal(state.worn.head,'royal_crown');assert.equal(state.worn.hair,'star_clip');assert.equal(state.worn.face,'glasses');
+assert.equal(Object.keys(state.worn).length,WEARABLES.length,'All accessories can be worn together');
 for(const it of ROOM_ITEMS){
   homeBuy(state,it.id);homePlace(state,it.id,20,30);homePlace(state,it.id,75,85);
   assert.equal(state.room.filter(p=>p.id===it.id).length,1);
