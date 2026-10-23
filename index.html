@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>寶貝動動腦</title>
+<!-- TODO: PWA manifest + icon -->
+<meta name="apple-mobile-web-app-title" content="寶貝動動腦">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#CDEBFF">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script defer src="js/core.js"></script>
+<script defer src="js/assets.js"></script>
+<script defer src="js/data.js"></script>
+<script defer src="js/games/shadow.js"></script>
+<script defer src="js/games/memory.js"></script>
+<script defer src="js/games/color.js"></script>
+<script defer src="js/games/shop.js"></script>
+<script defer src="js/games/pattern.js"></script>
+<script defer src="js/games/size.js"></script>
+<script defer src="js/bank.js"></script>
+<script defer src="js/main.js"></script>
+</head>
+<body>
+<div id="app">
+  <section id="home" class="screen">
+    <header class="home-top">
+      <button id="starsBtn" class="stars" aria-label="我的星星"><span style="display:inline" data-art="star"></span> <span id="starCount">0</span></button>
+      <button id="soundBtn" class="icon-btn" aria-label="聲音開關"><span data-art="soundon"></span></button>
+    </header>
+    <h1 class="title" aria-label="寶貝動動腦">
+      <span style="--t:#FFD35C;--r:-6deg">寶</span><span style="--t:#FF9EC0;--r:4deg">貝</span><span style="--t:#9FD8FF;--r:-3deg">動</span><span style="--t:#A8E6B8;--r:5deg">動</span><span style="--t:#C9B5FF;--r:-4deg">腦</span>
+    </h1>
+    <div class="diff" role="group" aria-label="難度">
+      <button data-diff="0">簡單</button><button data-diff="1">普通</button><button data-diff="2">挑戰</button>
+    </div>
+    <div class="menu">
+      <button class="game-btn" data-game="shadow" style="--c:#FFD35C"><span data-art="elephant"></span><span>找影子</span></button>
+      <button class="game-btn" data-game="memory" style="--c:#FF9EC0"><span data-art="cards"></span><span>翻翻樂</span></button>
+      <button class="game-btn" data-game="color" style="--c:#9FD8FF"><span data-art="palette"></span><span>顏色分類</span></button>
+      <button class="game-btn" data-game="shop" style="--c:#FFB77A"><span data-art="store"></span><span>小小商店</span></button>
+      <button class="game-btn" data-game="pattern" style="--c:#C9B5FF"><span data-art="repeat"></span><span>規律接龍</span></button>
+      <button class="game-btn" data-game="size" style="--c:#A8E6B8"><span data-art="ruler"></span><span>大小排排站</span></button>
+      <button class="game-btn wide" id="bankBtn" style="--c:#FFE7A0"><span data-art="pig"></span><span>存錢豬</span></button>
+    </div>
+    <p class="parent-tip">家長小提示：在瀏覽器選「加入主畫面」，就能像 App 一樣全螢幕開啟。</p>
+  </section>
+
+  <section id="game" class="screen" hidden>
+    <header class="bar">
+      <button class="icon-btn home-btn" aria-label="回首頁"><span data-art="home"></span></button>
+      <div id="progress" class="progress"></div>
+      <div class="spacer"></div>
+    </header>
+    <div id="stage" class="stage"></div>
+  </section>
+
+  <section id="bank" class="screen" hidden>
+    <header class="bar">
+      <button class="icon-btn home-btn" aria-label="回首頁"><span data-art="home"></span></button>
+      <div class="stars"><span style="display:inline" data-art="star"></span> <span id="bankStars">0</span></div>
+      <div class="spacer"></div>
+    </header>
+    <div class="bank">
+      <span id="pig" class="pig" data-art="pig"></span>
+      <div id="jar" class="jar"></div>
+      <div class="bank-actions">
+        <button id="spendBtn" class="game-btn" style="--c:#FF9EC0"><span data-art="candy"></span><span>換貼紙</span></button>
+        <button id="saveBtn" class="game-btn" style="--c:#FFD35C"><span data-art="pig"></span><span>存起來</span></button>
+      </div>
+      <div id="album" class="album"></div>
+    </div>
+  </section>
+</div>
+<div id="cheer" class="cheer" hidden><div id="cheerEmoji" class="cheer-emoji emoji"><span data-art="party"></span></div></div>
+<canvas id="confetti"></canvas>
+
+</body>
+</html>
