@@ -57,7 +57,7 @@ for(const L of [0,1,2,4,5,9])for(const random of [0,.25,.5,.999999]){
   const t=setup(L,random),guided=L<5;
   assert.ok(t.needed>=(L<2?1:L<5?2:3)&&t.needed<=(L<2?3:5));
   assert.ok(t.pile.children.length>t.needed&&t.pile.children.length<=t.needed+3);
-  assert.equal(t.bowlFish.children.length,guided?t.needed:0);
+  assert.equal(t.bowlFish.children.length,L<2?t.needed:0);
   t.advance(1000);
   assert.match(t.spoken.at(-1),/^露比想吃[一兩三四五]條魚/);
   assert.equal(t.pile.children[0].drop(false),false,'Missed bowl must not consume fish');

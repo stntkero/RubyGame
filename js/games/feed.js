@@ -1,5 +1,5 @@
 GAMES.feed = function(stage,L,done){
-  const showSlots=L<5,min=L<2?1:L<5?2:3;
+  const showSlots=L<5,guides=L<2,min=L<2?1:L<5?2:3;
   const needed=min+Math.floor(Math.random()*((L<2?3:5)-min+1));
   const total=needed+1+Math.floor(Math.random()*3);
   const root=div('feed-game'),top=div('feed-top');
@@ -41,10 +41,10 @@ GAMES.feed = function(stage,L,done){
   request.addEventListener('click',()=>{interacted=true;if(!finished)ask()});
   const renderBowl=newFish=>{
     bowlFish.replaceChildren();
-    for(let i=0;i<(showSlots?needed:fed.length);i++){
+    for(let i=0;i<(guides?needed:fed.length);i++){
       const source=fed[i],filled=source!==undefined;
       const item=document.createElement(filled&&!showSlots?'button':'div');
-      item.className='feed-fish-slot'+(showSlots?' guided':'')+(filled?' filled':'')+(source===newFish&&filled?' feed-pop':'');
+      item.className='feed-fish-slot'+(guides?' guided':'')+(filled?' filled':'')+(source===newFish&&filled?' feed-pop':'');
       if(filled){
         item.innerHTML=art('fish');
         if(!showSlots){
