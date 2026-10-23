@@ -4,7 +4,7 @@ import {join, relative, basename, dirname, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const walk = d => readdirSync(d).flatMap(f => statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]);
-const files = Object.fromEntries(walk(join(root, 'assets/game')).filter(f => f.endsWith('.webp'))
+const files = Object.fromEntries(walk(join(root, 'assets/game')).filter(f => f.endsWith('.webp') && !/wear-fit/.test(f))
   .map(f => [basename(f, '.webp').replace(/-/g, '_'), relative(root, f).split(sep).join('/')]));
 const path = join(root, 'js/assets.js');
 let src = readFileSync(path, 'utf8'), n = 0;

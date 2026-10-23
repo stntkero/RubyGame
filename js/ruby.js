@@ -4,8 +4,10 @@ function rubyFigure(extraClass=''){
   figure.innerHTML=art('ruby','ruby-base');
   WEARABLES.filter(it=>homeState.worn[it.id]).forEach(it=>{
     const layer=div('ruby-wear ruby-wear-'+it.slot),a=it.anchor;layer.dataset.wear=it.id;
-    layer.style.cssText=`left:${a.x}%;top:${a.y}%;width:${a.size}%;height:${a.size}%;transform:translate(-50%,-50%) rotate(${a.rot}deg)`;
-    layer.innerHTML=art(it.id);figure.append(layer);
+    const fit=typeof WEAR_FIT!=='undefined'&&WEAR_FIT[it.id];
+    if(fit){layer.classList.add('ruby-wear-fit');layer.innerHTML=`<img class="art" src="${fit}" alt="" draggable="false">`}
+    else{layer.style.cssText=`left:${a.x}%;top:${a.y}%;width:${a.size}%;height:${a.size}%;transform:translate(-50%,-50%) rotate(${a.rot}deg)`;layer.innerHTML=art(it.id)}
+    figure.append(layer);
   });
   return figure;
 }

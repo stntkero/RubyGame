@@ -15,7 +15,8 @@ const mainBox = {left: -mainInfo.trimOffsetLeft, top: -mainInfo.trimOffsetTop, w
 for (const f of walk(SRC).filter(f => f.endsWith('.png') && !f.includes('-preview') && !f.includes(join('img', 'bg')))) {
   const out = join(OUT, relative(SRC, f)).replace(/\.png$/, '.webp');
   mkdirSync(dirname(out), {recursive: true});
-  const isWalk = /walk-\d\.png$/.test(f);
+  // 走路分解圖和「穿在身上」的配件圖層（wear-fit/）都要跟主圖同一個裁切框
+  const isWalk = /walk-\d\.png$/.test(f) || /wear-fit/.test(f);
   await (isWalk ? sharp(f).extract(mainBox) : sharp(f).trim({threshold: 1})).resize(512, 512, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
     .webp({quality: 82, alphaQuality: 90}).toFile(out);
   console.log(relative(root, out), Math.round(statSync(out).size / 1024) + 'KB');

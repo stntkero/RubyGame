@@ -343,3 +343,4 @@ button.piece{cursor:pointer}
 }
 .parent-tip{background:var(--paper);border-radius:12px;padding:4px 10px;opacity:.85}
 .room-object.in-room{--object-size:calc(var(--ruby-w,100px)*var(--k,1))}
+.ruby-wear.ruby-wear-fit{inset:0;width:100%;height:100%;transform:none}
