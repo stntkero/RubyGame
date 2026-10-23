@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 import './feed-test.mjs';
 import './puzzle-test.mjs';
+import './home-test.mjs';
 
 const root=new URL('../',import.meta.url);
 const read=p=>readFileSync(new URL(p,root),'utf8');

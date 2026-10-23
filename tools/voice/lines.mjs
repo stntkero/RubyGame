@@ -13,7 +13,7 @@ export function allLines() {
   const L = new Set();
   const add = s => L.add(s);
   // 每個遊戲開場提示
-  ['幫它們找到影子', '找出一樣的兩張', '把球放進一樣顏色的籃子', '下一個是什麼呢？', '從小排到大', '餵露比吃魚'].forEach(add);
+  ['幫它們找到影子', '找出一樣的兩張', '把球放進一樣顏色的籃子', '下一個是什麼呢？', '從小排到大', '把拼圖拼起來'].forEach(add);
   // 物品、顏色名稱（找影子、翻翻樂、規律、顏色分類）
   THINGS.forEach(t => add(t.n));
   COLORS.forEach(c => add(c.n));
@@ -35,6 +35,8 @@ export function allLines() {
   for (let n = 1; n <= 5; n++) add('露比想吃' + N(n) + '條魚');
   for (let n = 1; n <= 5; n++) add('還要再' + N(n) + '條');
   ['太多了，拿回去一條', '好好吃！謝謝你！'].forEach(add);
+  // 露比的家（任務 10）
+  ['買到了！', '星星不夠，再去玩遊戲吧', '把家具拖進房間'].forEach(add);
   return [...L];
 }
 
