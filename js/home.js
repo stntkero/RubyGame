@@ -209,8 +209,11 @@ function roomDraggable(b,id,scene,tray){
     b.classList.add('room-dragging');
     // 拖曳時移到最上層，才不會被下方的收納盒蓋住
     document.body.append(b);try{b.setPointerCapture(e.pointerId)}catch(_){}
-    b.style.position='fixed';b.style.left=rect.left+'px';b.style.top=rect.top+'px';b.style.transform='none';
-    const move=ev=>{b.style.left=rect.left+ev.clientX-sx+'px';b.style.top=rect.top+ev.clientY-sy+'px'};
+    // 拖曳中就顯示家具在房間裡的實際大小（以露比為基準），中心對準原本的位置
+    const it=ROOM_ITEMS.find(it=>it.id===id),rubyW=parseFloat(scene.style.getPropertyValue('--ruby-w'))||100,S=Math.round(rubyW*(it&&it.k||1));
+    const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+    b.style.position='fixed';b.style.transform='none';b.style.width=b.style.height=S+'px';b.style.fontSize=Math.round(S*.85)+'px';
+    const move=ev=>{b.style.left=cx-S/2+ev.clientX-sx+'px';b.style.top=cy-S/2+ev.clientY-sy+'px'};move(e);
     const finish=ev=>{
       b.removeEventListener('pointermove',move);b.removeEventListener('pointerup',finish);b.removeEventListener('pointercancel',finish);b.removeEventListener('lostpointercapture',cancel);
       b.remove();
@@ -220,7 +223,7 @@ function roomDraggable(b,id,scene,tray){
         const r=scene.getBoundingClientRect(),t=tray.getBoundingClientRect();
         if(ev.clientX>=t.left&&ev.clientX<=t.right&&ev.clientY>=t.top&&ev.clientY<=t.bottom)homeStore(homeState,id);
         else if(ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom){
-          const x=rect.left+ev.clientX-sx+rect.width/2,y=rect.top+ev.clientY-sy+rect.height/2;
+          const x=cx+ev.clientX-sx,y=cy+ev.clientY-sy;
           homePlace(homeState,id,(x-r.left)/r.width*100,(y-r.top)/r.height*100);
         }
         saveHome();sfx.pop();
