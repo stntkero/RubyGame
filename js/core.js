@@ -98,6 +98,53 @@ function makeDraggable(el,onDrop){
 function hitTarget(targets,x,y,pad=24){
   return targets.find(t=>{const r=t.getBoundingClientRect();return x>r.left-pad&&x<r.right+pad&&y>r.top-pad&&y<r.bottom+pad});
 }
+// Hints demonstrate a move without changing game state.
+const hintStops=new Set();
+function stopHints(){for(const stop of [...hintStops])stop()}
+function hintDrag(fromEl,toEl){
+  if(!fromEl?.isConnected||!toEl?.isConnected)return ()=>{};
+  const a=fromEl.getBoundingClientRect(),b=toEl.getBoundingClientRect();
+  const paw=div('hint-paw'+(reduceMotion?' hint-still':''));
+  paw.setAttribute('aria-hidden','true');paw.innerHTML=art('hint_paw');
+  paw.style.setProperty('--hx',a.left+a.width/2+'px');
+  paw.style.setProperty('--hy',a.top+a.height/2+'px');
+  paw.style.setProperty('--tx',b.left+b.width/2+'px');
+  paw.style.setProperty('--ty',b.top+b.height/2+'px');
+  document.body.append(paw);
+  let frame=0,timer=0,stopped=false;
+  const stop=()=>{
+    if(stopped)return;stopped=true;
+    clearTimeout(timer);cancelAnimationFrame(frame);paw.remove();hintStops.delete(stop);
+  };
+  const check=()=>{
+    if(!fromEl.isConnected||!toEl.isConnected){stop();return}
+    frame=requestAnimationFrame(check);
+  };
+  hintStops.add(stop);frame=requestAnimationFrame(check);timer=setTimeout(stop,2200);
+  return stop;
+}
+function hintTap(el){return hintDrag(el,el)}
+function idleHint(getPair,{first=5000,every=8000}={}){
+  if(diff!==0&&diff!==1)return ()=>{};
+  const g=gen,anchor=stage.firstElementChild;
+  let timer=0,animation=()=>{},stopped=false;
+  const valid=()=>g===gen&&stage.isConnected&&anchor?.isConnected;
+  const stop=()=>{
+    if(stopped)return;stopped=true;clearTimeout(timer);animation();
+    stage.removeEventListener('pointerdown',reset,true);observer.disconnect();hintStops.delete(stop);
+  };
+  const play=()=>{
+    if(!valid()||(diff!==0&&diff!==1)){stop();return}
+    const pair=getPair();animation();
+    if(pair)animation=pair.tap?hintTap(pair.tap):hintDrag(pair.from,pair.to);
+    timer=setTimeout(play,every);
+  };
+  const reset=()=>{clearTimeout(timer);animation();if(valid())timer=setTimeout(play,first);else stop()};
+  const observer=new MutationObserver(()=>{if(!valid())stop()});
+  observer.observe(stage,{childList:true});
+  stage.addEventListener('pointerdown',reset,true);hintStops.add(stop);reset();
+  return stop;
+}
 let comfortPeek=null,comfortTimer=0;
 function peekRubyComfort(){
   if(comfortTimer)return;

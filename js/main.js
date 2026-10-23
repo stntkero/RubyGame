@@ -13,13 +13,14 @@ function renderProgress(){
   for(let i=0;i<5;i++){const d=document.createElement('i');if(i<round%5)d.className='on';p.append(d)}
 }
 function nextRound(){
-  renderProgress();stage.innerHTML='';
+  stopHints();gen++;renderProgress();stage.innerHTML='';
   const g=gen;
   if(round>0&&PROMPT_EVERY_ROUND[current])say(PROMPTS[current]);
   relayout=GAMES[current](stage,round+diff*2,()=>{if(g===gen)roundDone()});
   relayout();
 }
 function roundDone(){
+  stopHints();
   const g=gen;
   stars++;store.set('stars',stars);round++;renderProgress();
   const big=round%5===0;
@@ -27,7 +28,7 @@ function roundDone(){
     if(g!==gen)return;
     sfx.win();say(pick(PRAISE,1)[0]);
     cheer(big);
-    setTimeout(()=>{$('#cheer').hidden=true;if(g===gen)nextRound()},big?2600:1800);
+    setTimeout(()=>{if(g!==gen)return;$('#cheer').hidden=true;nextRound()},big?2600:1800);
   },500);
 }
 function cheer(big){
@@ -35,8 +36,8 @@ function cheer(big){
   $('#cheer').hidden=false;el.style.animation='none';void el.offsetWidth;el.style.animation='';
   if(!reduceMotion)confetti(big?160:70);
 }
-function startGame(name){gen++;current=name;round=0;show('game');if(PROMPTS[name])say(PROMPTS[name]);requestAnimationFrame(nextRound)}
-function goHome(){gen++;hushVoice();current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home');paintHomeRuby()}
+function startGame(name){stopHints();gen++;current=name;round=0;show('game');if(PROMPTS[name])say(PROMPTS[name]);const g=gen;requestAnimationFrame(()=>{if(g===gen)nextRound()})}
+function goHome(){stopHints();gen++;hushVoice();current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home');paintHomeRuby()}
 
 document.querySelectorAll('.game-btn[data-game]').forEach(b=>b.addEventListener('click',()=>{sfx.pop();startGame(b.dataset.game)}));
 document.querySelectorAll('.home-btn').forEach(b=>b.addEventListener('click',goHome));

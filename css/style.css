@@ -298,3 +298,22 @@ button.piece{cursor:pointer}
   .wardrobe-preview{height:100%;width:42%;flex:0 1 42%}
   .wardrobe-grid{width:min(52%,520px)}
 }
+/* A demonstration floats above draggables (50) and below celebrations (100). */
+.hint-paw{position:fixed;left:0;top:0;width:64px;height:64px;font-size:64px;display:grid;place-items:center;pointer-events:none;z-index:90;opacity:0;transform-origin:50% 15%;animation:hint-drag 2.2s linear forwards}
+.hint-paw>.art{width:64px;height:64px}
+@keyframes hint-drag{
+  0%{opacity:0;transform:translate(var(--hx),var(--hy)) translate(-50%,-15%) scale(1)}
+  9%{opacity:.65;transform:translate(var(--hx),var(--hy)) translate(-50%,-15%) scale(1)}
+  18%{opacity:.65;transform:translate(var(--hx),var(--hy)) translate(-50%,-15%) scale(.9);animation-timing-function:ease-in-out}
+  73%{opacity:.65;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%) scale(.9)}
+  82%{opacity:.65;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%) scale(1)}
+  100%{opacity:0;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%) scale(1)}
+}
+/* Discrete blinks keep their duration despite the global reduced-motion rule. */
+.hint-paw.hint-still{animation:hint-blink 2.2s steps(1,end) forwards!important}
+@keyframes hint-blink{
+  0%,36%{opacity:0;transform:translate(var(--hx),var(--hy)) translate(-50%,-15%)}
+  9%,23%{opacity:.65;transform:translate(var(--hx),var(--hy)) translate(-50%,-15%)}
+  50%,77%{opacity:.65;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%)}
+  64%,100%{opacity:0;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%)}
+}

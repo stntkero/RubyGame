@@ -30,6 +30,7 @@ GAMES.puzzle = function(stage,L,done){
   guide.style.opacity=ghost?'.25':'0';
   board.append(guide);
   let left=count,finished=false;
+  const hintMoves=[];
   const paintTile=(el,index)=>{
     const col=index%cols,row=Math.floor(index/cols);
     el.style.backgroundSize=`${cols*100}% ${rows*100}%`;
@@ -43,6 +44,7 @@ GAMES.puzzle = function(stage,L,done){
     const piece=div('piece puzzle-tile');paintTile(piece,index);
     if(round===0&&diff===0&&i===0)piece.classList.add('wiggle');
     tray.append(piece);
+    hintMoves.push({from:piece,to:cells[index]});
     makeDraggable(piece,(el,x,y)=>{
       if(finished||!root.isConnected||cells[index].classList.contains('filled'))return false;
       const target=puzzleCell(layout,board.getBoundingClientRect(),x,y);
@@ -57,6 +59,7 @@ GAMES.puzzle = function(stage,L,done){
     });
   });
   root.append(frame,tray);stage.append(root);
+  idleHint(()=>!finished&&hintMoves.find(m=>!m.to.classList.contains('filled')));
   return ()=>{
     const style=getComputedStyle(stage);
     const width=stage.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);

@@ -4,6 +4,7 @@ GAMES.memory = function(stage,L,done){
   const deck=shuffle([...faces,...faces]);
   const grid=div('grid');
   let open=[],lock=false,matched=0;
+  const cards=[];
   deck.forEach(it=>{
     const c=document.createElement('button');c.className='card';c.setAttribute('aria-label','卡片');
     c.innerHTML=`<div class="in"><div class="face back"></div><div class="face front">${art(it.id)}</div></div>`;
@@ -20,9 +21,14 @@ GAMES.memory = function(stage,L,done){
         setTimeout(()=>{a.c.classList.remove('up');b.c.classList.remove('up');lock=false},1000);
       }
     });
-    grid.append(c);
+    grid.append(c);cards.push({c,it});
   });
   stage.append(grid);
+  idleHint(()=>{
+    if(lock)return;
+    const next=cards.find(({c,it})=>!c.classList.contains('up')&&(!open.length||it.id===open[0].it.id));
+    if(next)return {tap:next.c};
+  });
   return ()=>{
     const N=deck.length,W=stage.clientWidth-24,H=stage.clientHeight-24,g=12;
     let best=60,bestCols=2;

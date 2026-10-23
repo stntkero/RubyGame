@@ -63,6 +63,7 @@ const ASSETS = {
   diamond: { emoji: '💎' },
   ferriswheel: { emoji: '🎡' },
   peacock: { emoji: '🦚' },
+  hint_paw: { emoji: '??' }, // Future image: assets/game/ui/hint_paw.webp
   home: { emoji: '🏠' },
   soundon: { emoji: '🔊' },
   soundoff: { emoji: '🔇' },

@@ -24,7 +24,7 @@ function setup(L,random){
   const timers=[],spoken=[],stage=new Element();
   const context=vm.createContext({
     Math:Object.assign(Object.create(Math),{random:()=>random}),
-    GAMES:{},document:{createElement:()=>new Element()},
+    GAMES:{},idleHint(){},document:{createElement:()=>new Element()},
     div:cls=>Object.assign(new Element(),{className:cls}),
     art:id=>`<span>${id}</span>`,
     NUMS:['一','兩','三','四','五','六','七'],say:text=>spoken.push(text),
