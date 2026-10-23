@@ -85,7 +85,7 @@ const ASSETS = {
   ruby_comfort: { emoji: '🐱', img: 'assets/game/ruby/ruby-comfort.webp' },
   ruby_eat: { emoji: '🐱', img: 'assets/game/ruby/ruby-eat.webp' },
   ruby_sleep: { emoji: '🐱', img: 'assets/game/ruby/ruby-sleep.webp' },
-  walk_1: { emoji: '🐱' }, walk_2: { emoji: '🐱' }, walk_3: { emoji: '🐱' }, walk_4: { emoji: '🐱' },
+  walk_1: { emoji: '🐱', img: 'assets/game/ruby/walk-1.webp' }, walk_2: { emoji: '🐱', img: 'assets/game/ruby/walk-2.webp' }, walk_3: { emoji: '🐱', img: 'assets/game/ruby/walk-3.webp' }, walk_4: { emoji: '🐱', img: 'assets/game/ruby/walk-4.webp' },
   bowl: { emoji: '🥣', img: 'assets/game/feed/bowl.webp' },
   bell: { emoji: '🔔', img: 'assets/game/feed/bell.webp' },
   ruby_house: { emoji: '🏡', img: 'assets/game/ui/ruby_house.webp' }, wardrobe: { emoji: '👗' }, room_tab: { emoji: '🛋️' }, sticker_album: { emoji: '📒' },

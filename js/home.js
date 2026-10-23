@@ -175,7 +175,7 @@ function walkRoomRuby(scene,ruby,content){
   on(scene,'pointerdown',e=>{
     if(e.button!==0||e.isPrimary===false||gesture||e.target.closest('.room-object,.room-cart'))return;
     e.preventDefault();gesture={id:e.pointerId,x:e.clientX,y:e.clientY,moved:false,ruby:!!e.target.closest('.room-ruby')};
-    scene.setPointerCapture(e.pointerId);
+    try{scene.setPointerCapture(e.pointerId)}catch(_){}
   });
   on(scene,'pointermove',e=>{if(gesture?.id===e.pointerId&&Math.hypot(e.clientX-gesture.x,e.clientY-gesture.y)>=8)gesture.moved=true});
   on(scene,'pointerup',e=>{
