@@ -15,7 +15,7 @@ const PRAISE=['好棒！','你好厲害！','答對了！','太棒了！','好�
 const CHEERS=['party','glowingstar','partyface','rainbow','clap','heart'];
 const SHOP=[{id:'candy',e:'🍬',n:'糖果',p:1},{id:'banana',e:'🍌',n:'香蕉',p:2},{id:'apple',e:'🍎',n:'蘋果',p:2},{id:'cookie',e:'🍪',n:'餅乾',p:3},{id:'donut',e:'🍩',n:'甜甜圈',p:3},
   {id:'icecream',e:'🍦',n:'冰淇淋',p:4},{id:'balloon',e:'🎈',n:'氣球',p:4},{id:'teddy',e:'🧸',n:'玩具熊',p:5},{id:'car',e:'🚗',n:'玩具車',p:5}];
-const NUMS=['一','兩','三','四','五','六','七'];
+const NUMS=['一','兩','三','四','五','六','七','八','九','十','十一','十二'];
 const SMALL=['candy','lollipop','blossom','ladybug','butterfly','clover','ribbon','cupcake','hatchingchick','daisy','cherries','soccer','music','fish','mushroom','bee'];
 const RARE=['unicorn','crown','castle','rainbow','carousel','fairy','dragon','diamond','ferriswheel','peacock'];
 // Anchors are centers; size is a percentage of Ruby's width, including future item images.

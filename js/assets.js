@@ -53,6 +53,7 @@ const ASSETS = {
   music: { emoji: '🎵', img: 'assets/game/ui/music.webp' },
   music_off: { emoji: '🔕', img: 'assets/game/ui/music_off.webp' },
   fish: { emoji: '🐟', img: 'assets/game/feed/fish.webp' },
+  fish_orange: { emoji: '🐠' },
   mushroom: { emoji: '🍄', img: 'assets/game/stickers/mushroom.webp' },
   bee: { emoji: '🐝', img: 'assets/game/stickers/bee.webp' },
   crown: { emoji: '👑', img: 'assets/game/stickers/crown.webp' },

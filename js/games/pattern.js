@@ -1,11 +1,13 @@
 GAMES.pattern = function(stage,L,done){
-  const tpls=L<2?['AB']:L<4?['AB','AAB','ABB']:L<6?['AAB','ABB','ABC','AABB']:['ABC','AABB','AABC','ABBC'];
+  const tpls=L<2?['AB']:L<4?['AB','AAB','ABB']:L<6?['AAB','ABB','ABC','AABB']:L<8?['ABC','AABB','AABC','ABBC']:L<10?['ABCD','AABC','ABAC']:['ABCD','AABC','ABAC','AABBC'];
   const tpl=pick(tpls,1)[0],len=tpl.length;
   const letters=[...new Set(tpl)];
-  const items=pick(THINGS,letters.length+1);
+  const optionCount=L>=10?5:letters.length+1;
+  const items=pick(THINGS,optionCount);
   const map={};letters.forEach((l,i)=>map[l]=items[i]);
   const t=2*len+Math.floor(Math.random()*len);
-  const answer=map[tpl[t%len]];
+  const missing=L>=8?len+Math.floor(Math.random()*(t-len)):t;
+  const answer=map[tpl[missing%len]];
   const seq=div('seq');
   for(let i=0;i<t;i++){const c=div('cell');c.innerHTML=`${art(map[tpl[i%len]].id)}`;seq.append(c)}
   const q=div('cell q');q.textContent='?';seq.append(q);
