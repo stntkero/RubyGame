@@ -342,6 +342,34 @@ button.piece{cursor:pointer}
   64%,100%{opacity:0;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%)}
 }
 .piece.puzzle-tile.dragging{box-shadow:none}
+
+/* Find the kittens: each button contains its own peek, cover and reveal. */
+.hide-game{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;gap:8px;--hide-s:80px}
+.hide-counter{display:flex;justify-content:center;gap:8px;flex-shrink:0;height:44px}
+.hide-count{display:grid;place-items:center;width:40px;height:40px;filter:brightness(0);opacity:.22}
+.hide-count .art,.hide-count .emoji{font-size:34px}
+.hide-count.filled{filter:none;opacity:1;animation:boing .6s}
+.hide-scene{position:relative;flex:1;min-height:0;width:100%;overflow:hidden;border:3px solid #B1C9A8;border-radius:28px;background:linear-gradient(#DDF3FF,#F1FAEF 38%,#D4EDB8 65%,#B9DCA2);box-shadow:inset 0 3px 10px #ffffff80}
+.hide-spot{position:absolute;isolation:isolate;touch-action:manipulation;border-radius:20px}
+.hide-spot .art,.hide-spot .emoji{display:block;width:100%;height:100%;object-fit:contain;font-size:calc(var(--hide-s)*.65);line-height:1;pointer-events:none}
+.hide-cover{position:absolute;z-index:2;left:14%;top:30%;width:72%;height:62%;display:grid;place-items:center;background:#D3E6BB;border-radius:38% 38% 24% 24%;transform:scale(var(--size)) scaleX(var(--mirror));transform-origin:50% 90%;transition:transform .45s ease,opacity .45s}
+.hide-cover .art,.hide-cover .emoji{width:calc(var(--hide-s)*.65);height:calc(var(--hide-s)*.65);max-width:100%;max-height:100%}
+.hide-peek{position:absolute;z-index:1;left:32%;top:10%;width:40%;height:50%;transform:scaleX(var(--mirror))}
+.hide-peek .art,.hide-peek .emoji{font-size:calc(var(--hide-s)*.36)}
+.hide-head{clip-path:inset(0 0 45% 0)}
+.hide-ears{top:23%;clip-path:inset(0 0 75% 0)}
+.hide-tail{left:65%;top:46%;width:30%;height:38%;transform:rotate(30deg);clip-path:inset(0 0 0 38%)}
+.hide-tail .art,.hide-tail .emoji{font-size:calc(var(--hide-s)*.28)}
+.hide-found .hide-cover{transform:translate(17%,8%) rotate(24deg) scale(.7) scaleX(var(--mirror));opacity:.35}
+.hide-found .hide-peek{visibility:hidden}
+.hide-full{position:absolute;z-index:3;left:17%;top:18%;width:66%;height:70%;display:grid;place-items:center;animation:boing .7s}
+.hide-full[hidden]{display:none}
+.hide-wiggle{animation:hide-wiggle .45s}
+@keyframes hide-wiggle{25%{rotate:-7deg}75%{rotate:7deg}}
+/* The ninth game and Ruby's house share the final pair of menu cells. */
+@media (orientation:landscape) and (min-width:600px){
+  .menu [data-game="hide"],.menu .house-menu{grid-column:span 2}
+}
 .wardrobe-ruby{pointer-events:auto;cursor:pointer}
 /* 背景插圖（任務 17）：首頁草地、遊戲畫面淡天空；深色模式用夜晚草地 */
 #home{background:url(../assets/game/bg/home-portrait.webp) center bottom/cover no-repeat}
@@ -375,3 +403,4 @@ button.piece{cursor:pointer}
 .tray .coin-slot{width:calc(var(--s)*.45);height:calc(var(--s)*.45)}
 .shop-wallet{align-items:center;background:rgba(255,253,247,.55);border:3px dashed var(--dash);border-radius:24px;padding:8px 10px}
 .shop-wallet .wallet-purse{font-size:calc(var(--s)*.7);margin-right:4px}
+.hide-cover:has(img.art){background:none}
