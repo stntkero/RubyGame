@@ -82,7 +82,7 @@ function renderRoom(content){
   tray.innerHTML=art('store_tray','tray-hint');
   ROOM_ITEMS.filter(it=>homeState.owned.includes(it.id)).forEach(it=>{
     const placement=homeState.room.find(p=>p.id===it.id),b=document.createElement('button');
-    b.className='room-object tier-'+it.tier;b.setAttribute('aria-label',it.n+'，拖曳移動');b.innerHTML=art(it.id);
+    b.className='room-object tier-'+it.tier;b.dataset.id=it.id;b.setAttribute('aria-label',it.n+'，拖曳移動');b.innerHTML=art(it.id);
     if(placement){positionRoomObject(b,placement);scene.append(b)}
     else {b.dataset.trayItem=it.id;tray.append(b)}
     roomDraggable(b,it.id,scene,tray);
@@ -92,6 +92,8 @@ function renderRoom(content){
 function positionRoomObject(b,p){
   b.classList.add('in-room');b.style.left=`clamp(var(--half), ${p.x}%, calc(100% - var(--half)))`;
   b.style.top=`clamp(var(--half), ${p.y}%, calc(100% - var(--half)))`;
+  // 越下面的東西越靠前（露比站在 y≈80）；地毯永遠貼地在最底層
+  b.style.zIndex=b.dataset.id==="room_rug"?2:10+Math.round(p.y);
 }
 function roomDraggable(b,id,scene,tray){
   b.addEventListener('pointerdown',e=>{
