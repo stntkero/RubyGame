@@ -317,3 +317,4 @@ button.piece{cursor:pointer}
   50%,77%{opacity:.65;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%)}
   64%,100%{opacity:0;transform:translate(var(--tx),var(--ty)) translate(-50%,-15%)}
 }
+.piece.puzzle-tile.dragging{box-shadow:none}

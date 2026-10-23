@@ -123,17 +123,17 @@ for(const L of [0,2,4,6])for(const name of ['shadow','color','size','puzzle']){
   t.advance(2500);assert.equal(t.finished(),1,name);assert.equal(t.wrong(),0,name);
 }
 for(const L of [0,2,5,9]){
-  const t=game('feed',L),root=t.stage.firstElementChild,[top,bowl,pile]=root.children;
+  const t=game('feed',L),root=t.stage.firstElementChild,[top,mid,pile]=root.children,bowl=mid.children[0];
   const needed=(top.children[1].innerHTML.match(/\[fish\]/g)||[]).length;
   for(let i=0;i<needed;i++){const pair=t.pair();assert.ok(pile.children.includes(pair.from));assert.equal(pair.to,bowl);assert.equal(pair.from.drop(pair.to),true)}
-  if(L>=5){assert.equal(t.pair().tap,top.firstElementChild);t.pair().tap.click()}
+  if(L>=5){assert.equal(t.pair().tap,mid.children[1]);t.pair().tap.click()}
   assert.ok(!t.pair());t.advance(2500);assert.equal(t.finished(),1);
 }
 {
-  const t=game('feed',5),root=t.stage.firstElementChild,[top,bowl,pile]=root.children;
+  const t=game('feed',5),root=t.stage.firstElementChild,[top,mid,pile]=root.children,bowl=mid.children[0];
   const needed=(top.children[1].innerHTML.match(/\[fish\]/g)||[]).length;
   for(let i=0;i<=needed;i++)pile.children[i].drop(bowl);
-  t.pair().tap.click();assert.equal(t.pair().tap,top.firstElementChild,'Surplus hint removes one fish');
+  t.pair().tap.click();assert.equal(t.pair().tap,mid.children[1],'Surplus hint removes one fish');
 }
 for(const L of [0,3,4,8]){
   const t=game('shop',L),[req,shelf,tray]=t.stage.children;

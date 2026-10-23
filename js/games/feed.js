@@ -82,7 +82,7 @@ GAMES.feed = function(stage,L,done){
   stage.append(root);renderBowl();later(()=>{if(!interacted&&!finished)ask()},1000);
   idleHint(()=>{
     if(finished)return;
-    if(!showSlots&&fed.length===needed)return {tap:ruby};
+    if(!showSlots&&fed.length===needed)return {tap:mid.children[1]||ruby};
     if(!showSlots&&fed.length>needed)return {tap:bowlFish.firstElementChild};
     return {from:fish.find(f=>!f.classList.contains('placed')),to:bowl};
   });
