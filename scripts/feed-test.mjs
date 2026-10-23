@@ -39,8 +39,8 @@ function setup(L,random){
   });
   vm.runInContext(readFileSync(new URL('../js/games/feed.js',import.meta.url),'utf8'),context);
   context.GAMES.feed(stage,L,()=>completed++)();
-  const root=stage.children[0],[top,bowl,pile]=root.children;
-  const [ruby,request,bell]=top.children,bowlFish=bowl.children[0];
+  const root=stage.children[0],[top,mid,pile]=root.children,[bowl,bell]=mid.children;
+  const [ruby,request]=top.children,bowlFish=bowl.children[0];
   const needed=(request.innerHTML.match(/<span>/g)||[]).length;
   const advance=ms=>{
     const end=now+ms;

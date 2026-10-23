@@ -71,12 +71,13 @@ GAMES.feed = function(stage,L,done){
       return true;
     });
   }
-  root.append(top,bowl,pile);
+  const mid=div('feed-mid');mid.append(bowl);
+  root.append(top,mid,pile);
   if(!showSlots){
-    const bell=document.createElement('button');bell.className='icon-btn feed-bell wiggle';
+    const bell=document.createElement('button');bell.className='feed-bell wiggle';
     bell.innerHTML=art('bell');bell.setAttribute('aria-label','餵好了');
     bell.addEventListener('click',()=>{bell.classList.remove('wiggle');confirm()});
-    top.append(bell);
+    mid.append(bell);
   }
   stage.append(root);renderBowl();later(()=>{if(!interacted&&!finished)ask()},1000);
   return ()=>root.style.setProperty('--s',sizeFor(stage,4,6.2)+'px');

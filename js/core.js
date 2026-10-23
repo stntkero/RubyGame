@@ -53,8 +53,11 @@ function speak(text,id){
     speechSynthesis.speak(u);
   }catch(e){duck(false)}
 }
+// 回首頁後短時間內，遊戲裡排程中的語音不要再冒出來
+let sayMutedUntil=0;
+function hushVoice(ms=1500){sayMutedUntil=Date.now()+ms;stopVoice()}
 function say(text){
-  if(!soundOn)return;
+  if(!soundOn||Date.now()<sayMutedUntil)return;
   stopVoice();
   const id=sayId,f=typeof VOICE_FILES!=='undefined'&&VOICE_FILES[text];
   if(!f){speak(text,id);return}

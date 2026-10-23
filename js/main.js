@@ -36,7 +36,7 @@ function cheer(big){
   if(!reduceMotion)confetti(big?160:70);
 }
 function startGame(name){gen++;current=name;round=0;show('game');if(PROMPTS[name])say(PROMPTS[name]);requestAnimationFrame(nextRound)}
-function goHome(){gen++;current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home');paintHomeRuby()}
+function goHome(){gen++;hushVoice();current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home');paintHomeRuby()}
 
 document.querySelectorAll('.game-btn[data-game]').forEach(b=>b.addEventListener('click',()=>{sfx.pop();startGame(b.dataset.game)}));
 document.querySelectorAll('.home-btn').forEach(b=>b.addEventListener('click',goHome));
