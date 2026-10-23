@@ -7,7 +7,7 @@ const PROMPT_EVERY_ROUND={pattern:1,size:1};
 /* ---------- 流程 ---------- */
 const stage=$('#stage');
 let current=null,round=0,gen=0,relayout=null;
-function show(id){['home','game','house'].forEach(x=>$('#'+x).hidden=x!==id);resetHomeRubyIdle()}
+function show(id){if(id!=='house')stopRoomRuby();['home','game','house'].forEach(x=>$('#'+x).hidden=x!==id);resetHomeRubyIdle()}
 function renderProgress(){
   const p=$('#progress');p.innerHTML='';
   for(let i=0;i<5;i++){const d=document.createElement('i');if(i<round%5)d.className='on';p.append(d)}

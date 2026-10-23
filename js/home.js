@@ -28,7 +28,22 @@ function homePlace(state,id,x,y){
   state.room.push({id,x:Math.max(0,Math.min(100,x)),y:Math.max(0,Math.min(100,y))});return true;
 }
 function homeStore(state,id){state.room=state.room.filter(it=>it.id!==id)}
-let homeState,houseTab='wardrobe',shopOpener=null;
+let homeState,houseTab='wardrobe',shopOpener=null,roomWalker=null;
+// x is Ruby's horizontal centre; y is her feet, measured from the top.
+function roomRubyTarget(x,y,width=26,height=40){
+  // Leave room for the rotated waddle and accessories above her head.
+  const half=Math.min(49,width*.62+1),top=Math.min(98,Math.max(55,height*1.18+1));
+  return {x:Math.max(half,Math.min(100-half,Number.isFinite(x)?x:25)),
+    y:Math.max(top,Math.min(98,Number.isFinite(y)?y:92))};
+}
+function roomRubyDepth(y){return 10+Math.round(y)}
+function roomIdle(callback,clock={setTimeout,clearTimeout,random:Math.random}){
+  let timer=null,disposed=false;
+  const pause=()=>{if(timer!==null)clock.clearTimeout(timer);timer=null};
+  const reset=()=>{pause();if(!disposed)timer=clock.setTimeout(()=>{timer=null;if(!disposed)callback()},8000+clock.random()*6000)};
+  return {reset,pause,dispose(){pause();disposed=true}};
+}
+function stopRoomRuby(){if(roomWalker){roomWalker.dispose();roomWalker=null}}
 function saveHome(){
   stars=homeState.stars;
   for(const key of ['stars','owned','worn','room'])store.set(key,homeState[key]);
@@ -57,6 +72,7 @@ function homeItemButton(it,shop=false){
   });return b;
 }
 function renderHouse(){
+  stopRoomRuby();
   $('#houseStars').textContent=stars;
   document.querySelectorAll('[data-house-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.houseTab===houseTab)));
   const content=$('#houseContent');content.replaceChildren();
@@ -79,7 +95,7 @@ function renderHouse(){
 }
 function renderRoom(content){
   const scene=div('room-scene');scene.id='roomScene';scene.setAttribute('aria-label','露比的房間');
-  scene.append(rubyFigure('room-ruby'));
+  const ruby=rubyFigure('room-ruby');scene.append(ruby);
   const cart=document.createElement('button');cart.className='icon-btn room-cart';cart.setAttribute('aria-label','商店');cart.innerHTML=art('cart');cart.onclick=openHomeShop;scene.append(cart);
   const tray=div('room-tray');tray.id='roomTray';tray.setAttribute('aria-label','收納盒，把家具拖進房間');
   tray.innerHTML=art('store_tray','tray-hint');
@@ -90,6 +106,78 @@ function renderRoom(content){
     else {b.dataset.trayItem=it.id;tray.append(b)}
     roomDraggable(b,it.id,scene,tray);
   });content.append(scene,tray);
+  roomWalker=walkRoomRuby(scene,ruby,content);
+}
+function walkRoomRuby(scene,ruby,content){
+  // The outer figure moves/faces; the inner figure animates all worn layers together.
+  const step=div('ruby-figure room-ruby-step');step.append(...ruby.childNodes);ruby.append(step);
+  ruby.setAttribute('role','button');ruby.setAttribute('aria-label','和露比打招呼');ruby.tabIndex=0;
+  const events=new AbortController(),on=(el,type,fn,options={})=>el.addEventListener(type,fn,{...options,signal:events.signal});
+  const saved=store.get('rubyPos',null);
+  let pos={x:Number.isFinite(saved?.x)?saved.x:25,y:Number.isFinite(saved?.y)?saved.y:92},size,frame=0,cheerTimer=0,gesture=null,disposed=false;
+  const held=new Set();
+  const bounds=()=>roomRubyTarget(pos?.x,pos?.y,size.w,size.h);
+  const paint=()=>{ruby.style.left=pos.x+'%';ruby.style.bottom=(100-pos.y)+'%';ruby.style.zIndex=roomRubyDepth(pos.y)};
+  const save=()=>store.set('rubyPos',{x:pos.x,y:pos.y});
+  const stop=()=>{cancelAnimationFrame(frame);frame=0;ruby.classList.remove('room-walking');save()};
+  const clearCheer=()=>{clearTimeout(cheerTimer);cheerTimer=0;step.querySelector('.ruby-base').replaceWith(htmlRuby('ruby'));ruby.classList.remove('room-happy')};
+  function htmlRuby(id){const box=div('');box.innerHTML=art(id,'ruby-base');return box.firstElementChild}
+  const happy=(cheer=false)=>{
+    clearCheer();
+    if(cheer){step.querySelector('.ruby-base').replaceWith(htmlRuby('ruby_cheer'));sfx.pop()}
+    ruby.classList.add('room-happy');cheerTimer=setTimeout(clearCheer,cheer?800:400);
+  };
+  const walk=(x,y)=>{
+    stop();clearCheer();
+    const from={...pos},to=roomRubyTarget(x,y,size.w,size.h);
+    ruby.style.setProperty('--room-facing',to.x<from.x?-1:1);
+    const duration=Math.max(400,Math.hypot(to.x-from.x,(to.y-from.y)*size.ratio)/22*1000);
+    if(reduceMotion){pos=to;paint();save();happy();return}
+    ruby.classList.add('room-walking');let start=null;
+    const tick=now=>{
+      if(disposed)return;
+      if(start===null)start=now;
+      const t=Math.min(1,(now-start)/duration);
+      pos={x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t};paint();
+      if(t<1)frame=requestAnimationFrame(tick);
+      else {stop();happy()}
+    };frame=requestAnimationFrame(tick);
+  };
+  const idle=roomIdle(()=>{
+    if(held.size||document.hidden||!$('#houseShop').hidden){idle.reset();return}
+    walk(Math.random()*100,55+Math.random()*43);idle.reset();
+  });
+  const resize=()=>{
+    stop();const w=scene.clientWidth,h=scene.clientHeight;
+    size={w:ruby.offsetWidth/w*100,h:ruby.offsetHeight/h*100,ratio:h/w};
+    pos=bounds();paint();save();
+  };
+  // ResizeObserver also covers changes in room height without a window resize.
+  const observer=new ResizeObserver(resize);resize();observer.observe(scene);
+  on(content,'pointerdown',e=>{held.add(e.pointerId);idle.pause();stop()},{capture:true});
+  const release=e=>{if(held.delete(e.pointerId)&&!held.size)idle.reset()};
+  on(window,'pointerup',release,{capture:true});on(window,'pointercancel',release,{capture:true});
+  on(scene,'pointerdown',e=>{
+    if(e.button!==0||e.isPrimary===false||gesture||e.target.closest('.room-object,.room-cart'))return;
+    e.preventDefault();gesture={id:e.pointerId,x:e.clientX,y:e.clientY,moved:false,ruby:!!e.target.closest('.room-ruby')};
+    scene.setPointerCapture(e.pointerId);
+  });
+  on(scene,'pointermove',e=>{if(gesture?.id===e.pointerId&&Math.hypot(e.clientX-gesture.x,e.clientY-gesture.y)>=8)gesture.moved=true});
+  on(scene,'pointerup',e=>{
+    if(gesture?.id!==e.pointerId)return;
+    const tap=gesture;gesture=null;
+    if(tap.moved||Math.hypot(e.clientX-tap.x,e.clientY-tap.y)>=8)return;
+    if(tap.ruby){stop();happy(true)}
+    else {const r=scene.getBoundingClientRect();walk((e.clientX-r.left-scene.clientLeft)/scene.clientWidth*100,(e.clientY-r.top-scene.clientTop)/scene.clientHeight*100)}
+  });
+  const cancel=()=>{gesture=null};on(scene,'pointercancel',cancel);on(scene,'lostpointercapture',cancel);
+  on(ruby,'keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();idle.reset();stop();happy(true)}});
+  on(document,'visibilitychange',()=>{
+    stop();clearCheer();held.clear();gesture=null;
+    if(document.hidden)idle.pause();else idle.reset();
+  });
+  idle.reset();
+  return {dispose(){disposed=true;stop();clearCheer();idle.dispose();observer.disconnect();events.abort()}};
 }
 // Coordinates are percentages of the scene. Visual clamps keep whole targets reachable after resize.
 function positionRoomObject(b,p){

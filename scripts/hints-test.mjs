@@ -76,7 +76,7 @@ for(const reduced of [false,true]){
 // Use the actual lifecycle functions with the actual helper, including delayed round changes.
 {
   const t=setup(),screens=Object.fromEntries(['home','game','house','progress','cheer','cheerEmoji','starCount'].map(k=>['#'+k,new Element()]));
-  Object.assign(t.ctx,{$:s=>s==='#stage'?t.stage:screens[s],resetHomeRubyIdle(){},paintHomeRuby(){},
+  Object.assign(t.ctx,{$:s=>s==='#stage'?t.stage:screens[s],resetHomeRubyIdle(){},stopRoomRuby(){},paintHomeRuby(){},
     renderStaticArt(){},stars:0,store:{set(){}},say(){},hushVoice(){},sfx:{win(){}},pick:a=>a.slice(0,1),PRAISE:['yay'],
     PROMPTS:{},PROMPT_EVERY_ROUND:{},document:{body:t.body,createElement:()=>new Element()},
     requestAnimationFrame:fn=>t.setTimeout(fn,16),art:()=>'',confetti(){}});
