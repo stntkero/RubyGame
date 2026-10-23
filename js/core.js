@@ -27,10 +27,39 @@ const sfx={
   no(){tone(320,.18,'sine',0,.1)},
   win(){[523,659,784,1047].forEach((f,i)=>tone(f,.28,'triangle',i*.12))}
 };
-function say(text){
-  if(!soundOn||!('speechSynthesis' in window))return;
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-TW';u.rate=.9;u.pitch=1.3;speechSynthesis.speak(u)}catch(e){}
+/* 配音：有預先產生的 mp3（js/voice-map.js）就用 Web Audio 播，沒有或失敗才用手機語音 */
+const getAC=()=>ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+const voiceBuf={};let voiceSrc=null,sayId=0;
+function loadVoice(f){
+  return voiceBuf[f]=voiceBuf[f]||fetch('assets/voice/'+f+'.mp3').then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()})
+    .then(b=>new Promise((ok,no)=>getAC().decodeAudioData(b,ok,no))).catch(e=>{delete voiceBuf[f];throw e});
 }
+function stopVoice(){
+  if(voiceSrc){try{voiceSrc.onended=null;voiceSrc.stop()}catch(e){}voiceSrc=null}
+  try{'speechSynthesis' in window&&speechSynthesis.cancel()}catch(e){}
+}
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  try{const u=new SpeechSynthesisUtterance(text);u.lang='zh-TW';u.rate=.9;u.pitch=1.3;speechSynthesis.speak(u)}catch(e){}
+}
+function say(text){
+  if(!soundOn)return;
+  stopVoice();
+  const id=++sayId,f=typeof VOICE_FILES!=='undefined'&&VOICE_FILES[text];
+  if(!f){speak(text);return}
+  try{if(getAC().state==='suspended')ac.resume()}catch(e){speak(text);return}
+  loadVoice(f).then(buf=>{
+    if(id!==sayId||!soundOn)return;
+    const s=ac.createBufferSource();s.buffer=buf;s.connect(ac.destination);s.start();voiceSrc=s;
+    s.onended=()=>{if(voiceSrc===s)voiceSrc=null};
+  }).catch(()=>{if(id===sayId)speak(text)});
+}
+// 第一次觸碰時解鎖音訊（iOS 需要），並在背景預先載入所有配音
+addEventListener('pointerdown',()=>{
+  try{if(getAC().state==='suspended')ac.resume()}catch(e){return}
+  if(typeof VOICE_FILES==='undefined')return;
+  Object.values(VOICE_FILES).reduce((p,f)=>p.then(()=>loadVoice(f)).catch(()=>{}),Promise.resolve());
+},{once:true,capture:true});
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 function makeDraggable(el,onDrop){
   el.addEventListener('pointerdown',e=>{
