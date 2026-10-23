@@ -13,13 +13,13 @@ const caches={
     return {
       async match(request){return entries.get(key(request))?.clone()},
       async put(request,response){if(failWrites)throw Error('Quota');entries.set(key(request),response)},
-      async addAll(paths){for(const path of paths){assert.ok(existsSync(new URL(path,root)),`Missing shell ${path}`);entries.set(key(path),new Response(path))}}
+      async addAll(paths){for(const p of paths){const path=typeof p==='string'?p:'./'+new URL(p.url).href.slice(base.length);assert.ok(existsSync(new URL(path,root)),`Missing shell ${path}`);entries.set(key(path),new Response(path))}}
     };
   },
   async keys(){return [...stores.keys()]},
   async delete(name){return stores.delete(name)}
 };
-const ctx=vm.createContext({URL,Response,caches,self:{location:{origin:'https://example.test',href:base+'sw.js'},addEventListener(type,fn){handlers[type]=fn}},
+const ctx=vm.createContext({URL,Request,Response,caches,self:{location:{origin:'https://example.test',href:base+'sw.js'},addEventListener(type,fn){handlers[type]=fn}},
   async fetch(request){fetches++;if(offline)throw Error('Offline');return new Response('network:'+key(request))}
 });
 vm.runInContext(source,ctx);
@@ -56,5 +56,5 @@ assert.equal((await request('https://fonts.gstatic.com/uncached.woff2')).respons
 const name=vm.runInContext('CACHE_NAME',ctx);
 stores.set('ruby-pwa-old',new Map());stores.set('another-app',new Map());
 await lifecycle('activate');assert.ok(stores.has(name));assert.ok(!stores.has('ruby-pwa-old'));assert.ok(stores.has('another-app'));
-assert.ok(!/skipWaiting|clients\.claim/.test(source),'Updates must wait until old clients close');
+assert.ok(source.includes("if(event.data === 'skipWaiting') self.skipWaiting();"),'Only the page (when on the home screen) may trigger skipWaiting');
 console.log('SW tests passed: shell offline launch, runtime caching, fonts, storage failure, and old-cache cleanup.');

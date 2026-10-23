@@ -37,7 +37,8 @@ function cheer(big){
   if(!reduceMotion)confetti(big?160:70);
 }
 function startGame(name){stopHints();gen++;current=name;round=0;show('game');if(PROMPTS[name])say(PROMPTS[name]);const g=gen;requestAnimationFrame(()=>{if(g===gen)nextRound()})}
-function goHome(){stopHints();gen++;hushVoice();current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home');paintHomeRuby()}
+var reloadOnHome=false; // 有新版待套用時，回首頁就重新整理
+function goHome(){stopHints();gen++;hushVoice();current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home');paintHomeRuby();if(reloadOnHome)location.reload()}
 
 document.querySelectorAll('.game-btn[data-game]').forEach(b=>b.addEventListener('click',()=>{sfx.pop();startGame(b.dataset.game)}));
 document.querySelectorAll('.home-btn').forEach(b=>b.addEventListener('click',goHome));
@@ -63,7 +64,17 @@ resetHomeRubyIdle();
 // Waiting workers activate after the old app closes; never reload a running game.
 // 本機開發（localhost）不啟用離線快取，避免測試時拿到舊檔案
 if(location.protocol.startsWith('http')&&location.hostname!=='localhost'&&'serviceWorker' in navigator){
+  // 更新策略：有新版時，只要停在首頁就立刻換成新版並重新整理；玩到一半不打斷，回首頁時再換
+  let swReload=false;
+  const onHome=()=>!$('#home').hidden;
+  const activateWaiting=reg=>{if(reg.waiting&&onHome())reg.waiting.postMessage('skipWaiting')};
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(swReload)return;swReload=true;if(onHome())location.reload();else reloadOnHome=true});
   addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js').catch(error=>console.warn('Offline setup failed:',error));
+    navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>{
+      activateWaiting(reg);
+      reg.addEventListener('updatefound',()=>{const w=reg.installing;w&&w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)activateWaiting(reg)})});
+      document.addEventListener('visibilitychange',()=>{if(!document.hidden)reg.update().catch(()=>{})});
+      setInterval(()=>activateWaiting(reg),5000);
+    }).catch(error=>console.warn('Offline setup failed:',error));
   },{once:true});
 }

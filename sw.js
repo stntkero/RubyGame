@@ -1,5 +1,5 @@
 // Before every deploy run: node scripts/bump-sw.mjs
-const SW_VERSION = '20261023T060927780Z';
+const SW_VERSION = '20261023T061448550Z';
 const CACHE_PREFIX = 'ruby-pwa-';
 const CACHE_NAME = CACHE_PREFIX + SW_VERSION;
 const APP_SHELL = [
@@ -11,16 +11,21 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL.map(url => new Request(new URL(url, self.location.href).href, {cache: 'reload'})))));
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(keys
     .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
-    .map(key => caches.delete(key)))));
+    .map(key => caches.delete(key)))).then(() => self.clients && self.clients.claim()));
 });
 
+// 頁面在首頁時會請新版本立即接手
+self.addEventListener('message', event => { if(event.data === 'skipWaiting') self.skipWaiting(); });
+
 async function fetchAndCache(request, cache) {
-  const response = await fetch(request);
+  // 同網域檔案略過瀏覽器的 HTTP 快取（GitHub Pages 會快取 10 分鐘），確保拿到這一版的檔案
+  const sameOrigin = new URL(request.url).origin === self.location.origin;
+  const response = await fetch(sameOrigin ? new Request(request.url, {cache: 'no-cache'}) : request);
   if(response.ok || response.type === 'opaque') {
     // Storage limits must not stop a successful network response.
     try { await cache.put(request, response.clone()); } catch (_) {}

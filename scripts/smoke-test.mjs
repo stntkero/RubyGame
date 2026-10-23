@@ -40,8 +40,10 @@ manifest.icons.forEach(icon=>checkRef(icon.src));
 const main=read('js/main.js');
 assert.match(main,/location\.protocol\.startsWith\('http'\)/);
 assert.match(main,/addEventListener\('load'/);
-assert.match(main,/serviceWorker\.register\('\.\/sw.js'\)/);
-assert.ok(!/location\.reload|controllerchange/.test(main));
+assert.match(main,/serviceWorker\.register\('\.\/sw.js'/);
+// 新版只在首頁時接手並重新整理；遊戲中只做標記，回首頁才重新整理
+assert.match(main,/if\(onHome\(\)\)location\.reload\(\);else reloadOnHome=true/);
+assert.match(main,/if\(reloadOnHome\)location\.reload\(\)/);
 
 const context=vm.createContext({});
 vm.runInContext(read('js/assets.js')+'\n'+read('js/data.js'),context);
