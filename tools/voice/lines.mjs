@@ -35,6 +35,7 @@ export function allLines() {
   for (let n = 1; n <= 5; n++) add('露比想吃' + N(n) + '條魚');
   for (let n = 1; n <= 5; n++) add('還要再' + N(n) + '條');
   ['太多了，拿回去一條', '好好吃！謝謝你！'].forEach(add);
+  // THINGS 會自動包含救援車輛（任務 15）
   // 露比的家（任務 10）
   ['買到了！', '星星不夠，再去玩遊戲吧', '把家具拖進房間'].forEach(add);
   return [...L];

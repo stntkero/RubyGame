@@ -60,7 +60,8 @@ initRubyHome();
 resetHomeRubyIdle();
 
 // Waiting workers activate after the old app closes; never reload a running game.
-if(location.protocol.startsWith('http')&&'serviceWorker' in navigator){
+// 本機開發（localhost）不啟用離線快取，避免測試時拿到舊檔案
+if(location.protocol.startsWith('http')&&location.hostname!=='localhost'&&'serviceWorker' in navigator){
   addEventListener('load',()=>{
     navigator.serviceWorker.register('./sw.js').catch(error=>console.warn('Offline setup failed:',error));
   },{once:true});
