@@ -73,9 +73,16 @@ const ASSETS = {
   arrow: { emoji: '➜' },
   basket: { emoji: '🧺' },
   coin: { emoji: '🪙' },
+  ruby: { emoji: '🐱' },
+  bowl: { emoji: '🥣' },
+  bell: { emoji: '🔔' },
 };
 // Legacy sticker saves contain emoji strings. Keep their storage format intact.
-const EMOJI_IDS = Object.fromEntries(Object.entries(ASSETS).map(([id, asset]) => [asset.emoji, id]));
+// Aliases (Ruby shares cat's fallback) keep the original sticker id.
+const EMOJI_IDS = Object.entries(ASSETS).reduce((ids,[id,asset])=>{
+  if(!ids[asset.emoji])ids[asset.emoji]=id;
+  return ids;
+},{});
 function escapeArt(value){
   return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
