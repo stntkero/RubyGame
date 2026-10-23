@@ -120,7 +120,11 @@ function walkRoomRuby(scene,ruby,content){
   const bounds=()=>roomRubyTarget(pos?.x,pos?.y,size.w,size.h);
   const paint=()=>{ruby.style.left=pos.x+'%';ruby.style.bottom=(100-pos.y)+'%';ruby.style.zIndex=roomRubyDepth(pos.y)};
   const save=()=>store.set('rubyPos',{x:pos.x,y:pos.y});
-  const stop=()=>{cancelAnimationFrame(frame);frame=0;ruby.classList.remove('room-walking');step.style.transform='';save()};
+  // 走路分解圖（walk_1～walk_4）：走路時像 GIF 一樣輪流切換，停下來換回站姿
+  const WALK=typeof ASSETS==='undefined'?[]:['walk_1','walk_2','walk_3','walk_4'].map(id=>ASSETS[id]&&ASSETS[id].img).filter(Boolean);
+  let walkFrame=-1;
+  const showWalkFrame=i=>{const img=step.querySelector('img.ruby-base');if(!img||i===walkFrame)return;walkFrame=i;img.src=i<0?ASSETS.ruby.img:WALK[i]};
+  const stop=()=>{cancelAnimationFrame(frame);frame=0;ruby.classList.remove('room-walking');step.style.transform='';if(WALK.length)showWalkFrame(-1);save()};
   const clearCheer=()=>{clearTimeout(cheerTimer);cheerTimer=0;step.querySelector('.ruby-base').replaceWith(htmlRuby('ruby'));ruby.classList.remove('room-happy')};
   function htmlRuby(id){const box=div('');box.innerHTML=art(id,'ruby-base');return box.firstElementChild}
   const happy=(cheer=false)=>{
@@ -143,7 +147,9 @@ function walkRoomRuby(scene,ruby,content){
       if(start===null)start=now;
       const t=Math.min(1,(now-start)/duration);
       pos={x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t};paint();
-      const s=Math.sin((now-start)/175*Math.PI);step.style.transform=`rotate(${(s*6).toFixed(2)}deg) translateY(${(-Math.abs(s)*6).toFixed(2)}%)`;
+      const s=Math.sin((now-start)/175*Math.PI);
+      if(WALK.length){showWalkFrame(Math.floor((now-start)/140)%WALK.length);step.style.transform=`translateY(${(-Math.abs(s)*3).toFixed(2)}%)`}
+      else step.style.transform=`rotate(${(s*6).toFixed(2)}deg) translateY(${(-Math.abs(s)*6).toFixed(2)}%)`;
       if(t<1)frame=requestAnimationFrame(tick);
       else {stop();happy()}
     };frame=requestAnimationFrame(tick);

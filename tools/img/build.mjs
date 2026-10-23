@@ -8,11 +8,15 @@ import {fileURLToPath} from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const SRC = join(root, 'assets/img'), OUT = join(root, 'assets/game');
 const walk = d => readdirSync(d).flatMap(f => statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]);
+// 走路分解圖（ruby/walk-N.png）用露比主圖的同一個裁切框，頭的位置才會跟主圖、配件完全對齊
+const mainInfo = (await sharp(join(SRC, 'ruby/ruby-main.png')).trim({threshold: 1}).toBuffer({resolveWithObject: true})).info;
+const mainBox = {left: -mainInfo.trimOffsetLeft, top: -mainInfo.trimOffsetTop, width: mainInfo.width, height: mainInfo.height};
 // 背景圖（bg/）保持原尺寸比例，另外處理
 for (const f of walk(SRC).filter(f => f.endsWith('.png') && !f.includes('-preview') && !f.includes(join('img', 'bg')))) {
   const out = join(OUT, relative(SRC, f)).replace(/\.png$/, '.webp');
   mkdirSync(dirname(out), {recursive: true});
-  await sharp(f).trim({threshold: 1}).resize(512, 512, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
+  const isWalk = /walk-\d\.png$/.test(f);
+  await (isWalk ? sharp(f).extract(mainBox) : sharp(f).trim({threshold: 1})).resize(512, 512, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
     .webp({quality: 82, alphaQuality: 90}).toFile(out);
   console.log(relative(root, out), Math.round(statSync(out).size / 1024) + 'KB');
 }
