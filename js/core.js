@@ -10,10 +10,13 @@ let stars=store.get('stars',0),soundOn=store.get('sound',true),diff=store.get('d
 
 /* ---------- 聲音 ---------- */
 let ac;
+function getAudioContext(){
+  return ac||(ac=new (window.AudioContext||window.webkitAudioContext)());
+}
 function tone(freq,dur=.15,type='sine',delay=0,vol=.2){
   if(!soundOn)return;
   try{
-    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    ac=getAudioContext();
     if(ac.state==='suspended')ac.resume();
     const t=ac.currentTime+delay,o=ac.createOscillator(),g=ac.createGain();
     o.type=type;o.frequency.setValueAtTime(freq,t);
@@ -27,9 +30,21 @@ const sfx={
   no(){tone(320,.18,'sine',0,.1)},
   win(){[523,659,784,1047].forEach((f,i)=>tone(f,.28,'triangle',i*.12))}
 };
+let speechId=0;
+function cancelSpeech(){
+  speechId++;
+  if('speechSynthesis' in window)speechSynthesis.cancel();
+  if(typeof bgmDuck==='function')bgmDuck(false);
+}
 function say(text){
   if(!soundOn||!('speechSynthesis' in window))return;
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-TW';u.rate=.9;u.pitch=1.3;speechSynthesis.speak(u)}catch(e){}
+  try{
+    cancelSpeech();
+    const id=speechId,u=new SpeechSynthesisUtterance(text);
+    const duck=on=>{if(id===speechId&&typeof bgmDuck==='function')bgmDuck(on)};
+    u.onstart=()=>duck(true);u.onend=u.onerror=()=>duck(false);
+    u.lang='zh-TW';u.rate=.9;u.pitch=1.3;speechSynthesis.speak(u);
+  }catch(e){if(typeof bgmDuck==='function')bgmDuck(false)}
 }
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 function makeDraggable(el,onDrop){

@@ -15,6 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script defer src="js/core.js"></script>
+<script defer src="js/bgm.js"></script>
 <script defer src="js/assets.js"></script>
 <script defer src="js/data.js"></script>
 <script defer src="js/games/shadow.js"></script>
@@ -31,7 +32,10 @@
   <section id="home" class="screen">
     <header class="home-top">
       <button id="starsBtn" class="stars" aria-label="我的星星"><span style="display:inline" data-art="star"></span> <span id="starCount">0</span></button>
-      <button id="soundBtn" class="icon-btn" aria-label="聲音開關"><span data-art="soundon"></span></button>
+      <div class="audio-controls">
+        <button id="musicBtn" class="icon-btn" aria-label="背景音樂開關" aria-pressed="true"><span data-art="music"></span></button>
+        <button id="soundBtn" class="icon-btn" aria-label="聲音開關"><span data-art="soundon"></span></button>
+      </div>
     </header>
     <h1 class="title" aria-label="寶貝動動腦">
       <span style="--t:#FFD35C;--r:-6deg">寶</span><span style="--t:#FF9EC0;--r:4deg">貝</span><span style="--t:#9FD8FF;--r:-3deg">動</span><span style="--t:#A8E6B8;--r:5deg">動</span><span style="--t:#C9B5FF;--r:-4deg">腦</span>

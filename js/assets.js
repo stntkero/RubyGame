@@ -47,6 +47,7 @@ const ASSETS = {
   cherries: { emoji: '🍒' },
   soccer: { emoji: '⚽' },
   music: { emoji: '🎵' },
+  music_off: { emoji: '🔕' },
   fish: { emoji: '🐟' },
   mushroom: { emoji: '🍄' },
   bee: { emoji: '🐝' },

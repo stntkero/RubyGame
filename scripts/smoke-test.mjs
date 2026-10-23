@@ -23,13 +23,13 @@ const ids=[...THINGS,...SHOP].map(it=>it.id).concat([...CHEERS,...SMALL,...RARE]
 for(const id of ids)assert.ok(ASSETS[id],`Unregistered data id: ${id}`);
 for(const it of [...THINGS,...SHOP])assert.equal(ASSETS[it.id].emoji,it.e);
 for(const [id,asset] of Object.entries(ASSETS)){
-  assert.match(id,/^[a-z][a-z0-9]*$/);
+  assert.match(id,/^[a-z][a-z0-9_]*$/);
   assert.ok(!asset.img,`Unexpected initial image: ${id}`);
   assert.equal(EMOJI_IDS[asset.emoji],id,'Legacy emoji must map to an id');
   assert.equal(art(id),`<span class="emoji">${asset.emoji}</span>`);
 }
 for(const file of ['index.html',...scripts]){
-  for(const m of read(file).matchAll(/(?:data-art="|\bart\(')([a-z0-9]+)(?:"|')/g))
+  for(const m of read(file).matchAll(/(?:data-art="|\bart\(')([a-z0-9_]+)(?:"|')/g))
     assert.ok(ASSETS[m[1]],`Unknown asset ${m[1]} in ${file}`);
 }
 ASSETS.dog.img='assets/img/dog.webp';

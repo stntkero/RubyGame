@@ -41,10 +41,17 @@ function goHome(){gen++;current=null;relayout=null;$('#cheer').hidden=true;stage
 document.querySelectorAll('.game-btn[data-game]').forEach(b=>b.addEventListener('click',()=>{sfx.pop();startGame(b.dataset.game)}));
 document.querySelectorAll('.home-btn').forEach(b=>b.addEventListener('click',goHome));
 const soundBtn=$('#soundBtn');
-function paintSound(){soundBtn.innerHTML=art(soundOn?'soundon':'soundoff')}
-soundBtn.addEventListener('click',()=>{soundOn=!soundOn;store.set('sound',soundOn);paintSound();sfx.pop()});
+const musicBtn=$('#musicBtn');
+function paintSound(){soundBtn.innerHTML=art(soundOn?'soundon':'soundoff');soundBtn.setAttribute('aria-pressed',String(soundOn))}
+function paintMusic(){musicBtn.innerHTML=art(bgmEnabled?'music':'music_off');musicBtn.setAttribute('aria-pressed',String(bgmEnabled))}
+soundBtn.addEventListener('click',()=>{
+  soundOn=!soundOn;store.set('sound',soundOn);paintSound();
+  if(soundOn)bgmStart();else{cancelSpeech();bgmStop()}
+  sfx.pop();
+});
+musicBtn.addEventListener('click',()=>{bgmSetEnabled(!bgmEnabled);paintMusic()});
 addEventListener('resize',()=>relayout&&relayout());
-$('#starCount').textContent=stars;paintSound();
+$('#starCount').textContent=stars;paintSound();paintMusic();
 const diffBtns=document.querySelectorAll('.diff button');
 function paintDiff(){diffBtns.forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.diff===diff)))}
 diffBtns.forEach(b=>b.addEventListener('click',()=>{diff=+b.dataset.diff;store.set('diff',diff);paintDiff();sfx.pop()}));
