@@ -1,6 +1,6 @@
 // Row-major cells; the square picture is divided into columns and rows.
 function puzzleLayout(L){
-  const cols=L<2?2:L<4?3:2,rows=L<4?1:L<6?2:3;
+  const cols=L>=8?3:L<2?2:L<4?3:2,rows=L>=10?4:L>=8?3:L<4?1:L<6?2:3;
   return {cols,rows,count:cols*rows,ghost:L<6};
 }
 function puzzleCell(layout,rect,x,y,pad=24){
@@ -42,7 +42,7 @@ GAMES.puzzle = function(stage,L,done){
   board.append(complete);frame.append(board);
   shuffle(Array.from({length:count},(_,i)=>i)).forEach((index,i)=>{
     const piece=div('piece puzzle-tile');paintTile(piece,index);
-    if(round===0&&diff===0&&i===0)piece.classList.add('wiggle');
+    if(round===0&&diff===1&&i===0)piece.classList.add('wiggle');
     tray.append(piece);
     hintMoves.push({from:piece,to:cells[index]});
     makeDraggable(piece,(el,x,y)=>{
