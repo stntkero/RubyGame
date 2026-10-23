@@ -342,3 +342,4 @@ button.piece{cursor:pointer}
   :root:not([data-theme="light"]) :is(#game,#house){background-image:url(../assets/game/bg/night-game-landscape.webp)}
 }
 .parent-tip{background:var(--paper);border-radius:12px;padding:4px 10px;opacity:.85}
+.room-object.in-room{--object-size:calc(var(--ruby-w,100px)*var(--k,1))}

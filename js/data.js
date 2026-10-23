@@ -29,10 +29,11 @@ const WEARABLES=[
   {id:'glasses',n:'眼鏡',slot:'face',tier:'medium',anchor:{x:44,y:37.5,size:42,rot:18}},
   {id:'scarf',n:'圍巾',slot:'neck',tier:'small',anchor:{x:43,y:69,size:33,rot:8}}
 ];
+// k：放進房間時的大小（以露比的高度為 1）
 const ROOM_ITEMS=[
-  {id:'room_bed',n:'床',tier:'large'},{id:'room_rug',n:'地毯',tier:'medium'},
-  {id:'room_lamp',n:'燈',tier:'small'},{id:'room_plant',n:'盆栽',tier:'small'},
-  {id:'room_ball',n:'球',tier:'small'},{id:'scratching_post',n:'貓抓柱',tier:'medium'},
-  {id:'bookshelf',n:'書櫃',tier:'large'},{id:'curtains',n:'窗簾',tier:'medium'},
-  {id:'fish_tank',n:'魚缸',tier:'large'},{id:'star_mobile',n:'星星吊飾',tier:'small'}
+  {id:'room_bed',n:'床',tier:'large',k:1.45},{id:'room_rug',n:'地毯',tier:'medium',k:1.6},
+  {id:'room_lamp',n:'燈',tier:'small',k:0.75},{id:'room_plant',n:'盆栽',tier:'small',k:0.7},
+  {id:'room_ball',n:'球',tier:'small',k:0.42},{id:'scratching_post',n:'貓抓柱',tier:'medium',k:1.05},
+  {id:'bookshelf',n:'書櫃',tier:'large',k:1.3},{id:'curtains',n:'窗簾',tier:'medium',k:1.2},
+  {id:'fish_tank',n:'魚缸',tier:'large',k:0.8},{id:'star_mobile',n:'星星吊飾',tier:'small',k:0.7}
 ];

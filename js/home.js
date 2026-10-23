@@ -160,6 +160,8 @@ function walkRoomRuby(scene,ruby,content){
   });
   const resize=()=>{
     stop();const w=scene.clientWidth,h=scene.clientHeight;
+    // 家具大小以露比為基準（見 ROOM_ITEMS 的 k）
+    scene.style.setProperty('--ruby-w',ruby.offsetWidth+'px');
     size={w:ruby.offsetWidth/w*100,h:ruby.offsetHeight/h*100,ratio:h/w};
     pos=bounds();paint();save();
   };
@@ -192,6 +194,7 @@ function walkRoomRuby(scene,ruby,content){
 }
 // Coordinates are percentages of the scene. Visual clamps keep whole targets reachable after resize.
 function positionRoomObject(b,p){
+  const it=ROOM_ITEMS.find(it=>it.id===b.dataset.id);if(it&&it.k)b.style.setProperty('--k',it.k);
   b.classList.add('in-room');b.style.left=`clamp(var(--half), ${p.x}%, calc(100% - var(--half)))`;
   b.style.top=`clamp(var(--half), ${p.y}%, calc(100% - var(--half)))`;
   // 越下面的東西越靠前（露比站在 y≈80）；地毯永遠貼地在最底層
