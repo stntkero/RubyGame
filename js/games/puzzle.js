@@ -24,7 +24,9 @@ GAMES.puzzle = function(stage,L,done){
   const guide=div('puzzle-picture'),complete=div('puzzle-picture puzzle-complete');
   const tray=div('puzzle-tray'),cells=[];
   root.style.setProperty('--cols',cols);root.style.setProperty('--rows',rows);
-  root.style.setProperty('--picture',`url("${puzzlePicture(pick(PUZZLES,1)[0])}")`);
+  // url() inside a CSS variable resolves against css/style.css, so pass an absolute URL
+  const src=puzzlePicture(pick(PUZZLES,1)[0]),abs=typeof URL==="function"&&document.baseURI?new URL(src,document.baseURI).href:src;
+  root.style.setProperty("--picture",`url("${abs}")`);
   guide.style.opacity=ghost?'.25':'0';
   board.append(guide);
   let left=count,finished=false;
