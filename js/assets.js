@@ -63,6 +63,7 @@ const ASSETS = {
   soundon: { emoji: '🔊' },
   soundoff: { emoji: '🔇' },
   cards: { emoji: '🃏' },
+  puzzle: { emoji: '🧩' },
   palette: { emoji: '🎨' },
   store: { emoji: '🏪' },
   repeat: { emoji: '🔁' },
