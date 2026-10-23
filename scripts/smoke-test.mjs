@@ -70,7 +70,7 @@ for(const [id,emoji] of Object.entries({ruby:'🐱',fish:'🐟',bowl:'🥣',bell
   assert.equal(ASSETS[id].emoji,emoji);
 assert.equal(EMOJI_IDS['🐱'],'cat','Ruby fallback must preserve legacy cat stickers');
 assert.ok(scripts.includes('js/games/feed.js'));
-assert.equal([...html.matchAll(/data-game="/g)].length,9);
+assert.equal([...html.matchAll(/data-game="/g)].length,10);
 assert.match(html,/data-game="feed"/);
 assert.ok(scripts.includes('js/games/puzzle.js'));
 assert.match(html,/data-game="puzzle"/);

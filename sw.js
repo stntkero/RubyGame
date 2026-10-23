@@ -1,11 +1,11 @@
 // Before every deploy run: node scripts/bump-sw.mjs
-const SW_VERSION = '20261023T132048448Z';
+const SW_VERSION = '20261023T152158308Z';
 const CACHE_PREFIX = 'ruby-pwa-';
 const CACHE_NAME = CACHE_PREFIX + SW_VERSION;
 const APP_SHELL = [
   './index.html', './css/style.css', './manifest.webmanifest',
   './js/voice-map.js', './js/core.js', './js/bgm.js', './js/assets.js', './js/data.js',
-  './js/games/shadow.js', './js/games/memory.js', './js/games/rescue.js',
+  './js/games/shadow.js', './js/games/memory.js', './js/games/color.js', './js/games/rescue.js',
   './js/games/shop.js', './js/games/feed.js', './js/games/puzzle.js',
   './js/games/pattern.js', './js/games/size.js', './js/games/hide.js', './js/ruby.js', './js/home.js', './js/main.js'
 ];
