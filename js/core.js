@@ -95,7 +95,17 @@ function makeDraggable(el,onDrop){
 function hitTarget(targets,x,y,pad=24){
   return targets.find(t=>{const r=t.getBoundingClientRect();return x>r.left-pad&&x<r.right+pad&&y>r.top-pad&&y<r.bottom+pad});
 }
-function wrong(t){sfx.no();t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake')}
+let comfortPeek=null,comfortTimer=0;
+function peekRubyComfort(){
+  if(comfortTimer)return;
+  if(!comfortPeek){
+    comfortPeek=div('ruby-comfort-peek');comfortPeek.setAttribute('aria-hidden','true');
+    comfortPeek.innerHTML=art('ruby_comfort');document.body.append(comfortPeek);
+  }
+  comfortPeek.hidden=false;
+  comfortTimer=setTimeout(()=>{comfortPeek.hidden=true;comfortTimer=0},reduceMotion?1200:1600);
+}
+function wrong(t){sfx.no();t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');peekRubyComfort()}
 function sizeFor(stage,cols,rowsTotal){
   const W=stage.clientWidth-24,H=stage.clientHeight-24;
   return Math.max(56,Math.min(130,(W-14*(cols-1))/cols,H/rowsTotal));

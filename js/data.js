@@ -1,5 +1,7 @@
 const PUZZLES=['ruby'];
 const THINGS=[
+  {id:'fire_truck',e:'🚒',n:'消防車'},{id:'ambulance',e:'🚑',n:'救護車'},
+  {id:'police_car',e:'🚓',n:'警車'},{id:'helicopter',e:'🚁',n:'直升機'},
   {id:'dog',e:'🐶',n:'小狗'},{id:'cat',e:'🐱',n:'小貓'},{id:'rabbit',e:'🐰',n:'兔子'},{id:'bear',e:'🐻',n:'小熊'},{id:'panda',e:'🐼',n:'熊貓'},{id:'lion',e:'🦁',n:'獅子'},
   {id:'frog',e:'🐸',n:'青蛙'},{id:'monkey',e:'🐵',n:'猴子'},{id:'pig',e:'🐷',n:'小豬'},{id:'chick',e:'🐥',n:'小雞'},{id:'unicorn',e:'🦄',n:'獨角獸'},{id:'turtle',e:'🐢',n:'烏龜'},
   {id:'elephant',e:'🐘',n:'大象'},{id:'giraffe',e:'🦒',n:'長頸鹿'},{id:'whale',e:'🐳',n:'鯨魚'},{id:'apple',e:'🍎',n:'蘋果'},{id:'banana',e:'🍌',n:'香蕉'},{id:'strawberry',e:'🍓',n:'草莓'},
