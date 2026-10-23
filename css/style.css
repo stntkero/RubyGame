@@ -319,3 +319,13 @@ button.piece{cursor:pointer}
 }
 .piece.puzzle-tile.dragging{box-shadow:none}
 .wardrobe-ruby .ruby-wear{pointer-events:auto;cursor:pointer}
+/* 背景插圖（任務 17）：首頁草地、遊戲畫面淡天空；深色模式用夜晚草地 */
+#home{background:url(../assets/game/bg/home-portrait.webp) center bottom/cover no-repeat}
+#game,#house{background:url(../assets/game/bg/game-portrait.webp) center/cover no-repeat}
+@media (orientation:landscape){
+  #home{background-image:url(../assets/game/bg/home-landscape.webp)}
+  #game,#house{background-image:url(../assets/game/bg/game-landscape.webp)}
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(#home,#game,#house){background-image:url(../assets/game/bg/night-portrait.webp)}}
+@media (prefers-color-scheme:dark) and (orientation:landscape){:root:not([data-theme="light"]) :is(#home,#game,#house){background-image:url(../assets/game/bg/night-landscape.webp)}}
+.parent-tip{background:var(--paper);border-radius:12px;padding:4px 10px;opacity:.85}
