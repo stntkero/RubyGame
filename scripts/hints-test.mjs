@@ -90,7 +90,7 @@ for(const reduced of [false,true]){
 }
 function game(name,L,random=.4){
   const stage=new Element(),time=clock();let getPair,finished=0,wrong=0;
-  const ctx=vm.createContext({...time,GAMES:{},round:0,diff:1,
+  const ctx=vm.createContext({...time,GAMES:{},round:0,diff:1,gen:1,
     Math:Object.assign(Object.create(Math),{random:()=>random}),
     document:{createElement:()=>new Element()},div:c=>new Element(c),
     idleHint:fn=>{getPair=fn},art:id=>`[${id}]`,pick:(a,n)=>a.slice(0,n),shuffle:a=>a.slice().reverse(),
@@ -104,7 +104,7 @@ function game(name,L,random=.4){
   ctx.GAMES[name](stage,L,()=>finished++);
   return {ctx,stage,pair:()=>getPair(),...time,finished:()=>finished,wrong:()=>wrong};
 }
-for(const L of [0,2,4,6])for(const name of ['shadow','color','size','puzzle']){
+for(const L of [0,2,4,6,8,10,14])for(const name of ['shadow','rescue','size','puzzle']){
   const t=game(name,L);let moves=0,prevRank=-1;
   while(t.pair()){
     const {from,to}=t.pair();assert.ok(from?.isConnected&&to?.isConnected,name);
@@ -117,7 +117,8 @@ for(const L of [0,2,4,6])for(const name of ['shadow','color','size','puzzle']){
       // Each cell has its own browser rect; simulate the matching board coordinates.
       to.getBoundingClientRect=()=>({left:r.left+(index%layout.cols)*r.width/layout.cols,top:r.top+Math.floor(index/layout.cols)*r.height/layout.rows,width:r.width/layout.cols,height:r.height/layout.rows});
     }
-    assert.equal(from.drop(to),true,`${name}: demonstrated drop must succeed`);
+    assert.equal(from.drop(to),name!=='rescue',`${name}: demonstrated drop must succeed (rescue vehicles return home)`);
+    if(name==='rescue')t.advance(2100);
     assert.ok(++moves<=12);
   }
   t.advance(2500);assert.equal(t.finished(),1,name);assert.equal(t.wrong(),0,name);
