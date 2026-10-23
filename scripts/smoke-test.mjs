@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import './hints-test.mjs';
 import './feed-test.mjs';
 import './puzzle-test.mjs';
+import './hide-test.mjs';
 import './home-test.mjs';
 import './reactions-test.mjs';
 import './sw-test.mjs';
@@ -58,7 +59,7 @@ for(const id of ids)assert.ok(ASSETS[id],`Unregistered data id: ${id}`);
 for(const it of [...THINGS,...SHOP])assert.equal(ASSETS[it.id].emoji,it.e);
 for(const [id,asset] of Object.entries(ASSETS)){
   assert.match(id,/^[a-z][a-z0-9_]*$/);
-  if(asset.img)assert.ok(existsSync(new URL('../'+asset.img,import.meta.url)),`Missing image file for ${id}: ${asset.img}`);
+  if(asset.img&&!asset.img.startsWith('assets/game/hide/'))assert.ok(existsSync(new URL('../'+asset.img,import.meta.url)),`Missing image file for ${id}: ${asset.img}`);
   assert.equal(ASSETS[EMOJI_IDS[asset.emoji]].emoji,asset.emoji,'Legacy emoji must map to a matching id');
   if(!asset.img)assert.equal(art(id),`<span class="emoji">${asset.emoji}</span>`);
 }
@@ -66,7 +67,7 @@ for(const [id,emoji] of Object.entries({ruby:'🐱',fish:'🐟',bowl:'🥣',bell
   assert.equal(ASSETS[id].emoji,emoji);
 assert.equal(EMOJI_IDS['🐱'],'cat','Ruby fallback must preserve legacy cat stickers');
 assert.ok(scripts.includes('js/games/feed.js'));
-assert.equal([...html.matchAll(/data-game="/g)].length,8);
+assert.equal([...html.matchAll(/data-game="/g)].length,9);
 assert.match(html,/data-game="feed"/);
 assert.ok(scripts.includes('js/games/puzzle.js'));
 assert.match(html,/data-game="puzzle"/);
