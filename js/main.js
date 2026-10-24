@@ -1,6 +1,6 @@
 renderStaticArt();
 
-const PROMPTS={shadow:'幫它們找到影子',memory:'找出一樣的兩張',color:'把球放進一樣顏色的籃子',rescue:'',
+const PROMPTS={shadow:'幫它們找到影子',memory:'找出一樣的兩張',color:'把球放進一樣顏色的籃子',rescue:'',fire:'',bandage:'',maze:'',
   puzzle:'把拼圖拼起來',shop:'',hide:'',feed:'',pattern:'下一個是什麼呢？',size:'從小排到大'};
 const PROMPT_EVERY_ROUND={pattern:1,size:1};
 
@@ -36,7 +36,7 @@ function cheer(big){
   $('#cheer').hidden=false;el.style.animation='none';void el.offsetWidth;el.style.animation='';
   if(!reduceMotion)confetti(big?160:70);
 }
-function startGame(name){stopHints();gen++;current=name;round=0;show('game');if(PROMPTS[name])say(PROMPTS[name]);const g=gen;requestAnimationFrame(()=>{if(g===gen)nextRound()})}
+function startGame(name){stopHints();gen++;current=name;round=0;$('#game').classList[name==='rescue'?'add':'remove']('hub');show('game');if(PROMPTS[name])say(PROMPTS[name]);const g=gen;requestAnimationFrame(()=>{if(g===gen)nextRound()})}
 var reloadOnHome=false; // 有新版待套用時，回首頁就重新整理
 function goHome(){stopHints();gen++;hushVoice();current=null;relayout=null;$('#cheer').hidden=true;stage.innerHTML='';$('#starCount').textContent=stars;show('home');paintHomeRuby();if(reloadOnHome)location.reload()}
 

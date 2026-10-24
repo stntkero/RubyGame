@@ -127,6 +127,8 @@ const ASSETS = {
   kitten_full_black: { emoji: '🐱', img: 'assets/game/hide/kitten_full_black.webp' },
   kitten_full_calico: { emoji: '🐱', img: 'assets/game/hide/kitten_full_calico.webp' },
   kitten_full_orange: { emoji: '🐱', img: 'assets/game/hide/kitten_full_orange.webp' },
+  // 救援大隊三個小遊戲（Claude 用 SVG 畫的，tools/img/svg/）
+  flame: { emoji: '🔥', img: 'assets/game/mini/flame.webp' }, smoke_puff: { emoji: '☁️', img: 'assets/game/mini/smoke_puff.webp' }, water_splash: { emoji: '💦', img: 'assets/game/mini/water_splash.webp' }, booboo: { emoji: '🩹', img: 'assets/game/mini/booboo.webp' }, bandage: { emoji: '🩹', img: 'assets/game/mini/bandage.webp' }, happy_heart: { emoji: '💖', img: 'assets/game/mini/happy_heart.webp' }, paw_print: { emoji: '🐾', img: 'assets/game/mini/paw_print.webp' }, bone: { emoji: '🦴', img: 'assets/game/mini/bone.webp' }, dog_house: { emoji: '🛖', img: 'assets/game/mini/dog_house.webp' }, maze_bush: { emoji: '🌳', img: 'assets/game/mini/maze_bush.webp' },
 };
 // Legacy sticker saves contain emoji strings. Keep their storage format intact.
 // Aliases (Ruby shares cat's fallback) keep the original sticker id.
