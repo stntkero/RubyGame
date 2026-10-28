@@ -94,23 +94,6 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
   transition:transform .28s cubic-bezier(.3,1.4,.5,1);cursor:grab}
 .piece.dragging{transition:none;z-index:50;box-shadow:0 14px 0 var(--ink);cursor:grabbing}
 .piece.placed{visibility:hidden}
-.rescue-calls,.rescue-garage{flex-wrap:nowrap;align-items:center;flex-shrink:0}
-.rescue-card{position:relative;display:grid;place-items:center;flex:none;width:calc(var(--s)*1.35);height:calc(var(--s)*1.35);
-  background:var(--paper);border:4px solid var(--ink);border-radius:24%;box-shadow:0 6px 0 var(--ink);cursor:pointer}
-.rescue-card.wiggle{animation:rescue-wiggle 2.4s ease-in-out infinite}
-.rescue-card.shake{animation:shake .35s}
-@keyframes rescue-wiggle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
-.rescue-card .rescue-scene{font-size:calc(var(--s)*.95)}
-.rescue-card.rescued{border-color:#4CC38A;box-shadow:0 6px 0 #4CC38A;animation:pop .4s}
-.rescue-card.rescued .rescue-scene{opacity:.55}
-.rescue-done{position:absolute;right:-6px;bottom:-6px;display:grid;place-items:center;width:calc(var(--s)*.52);height:calc(var(--s)*.52);
-  background:var(--paper);border:3px solid #4CC38A;border-radius:50%;font-size:calc(var(--s)*.35)}
-.rescue-bay{width:var(--s);height:var(--s);flex:none}
-.rescue-car.dispatching{visibility:hidden;pointer-events:none}
-.rescue-drive{position:fixed;display:grid;place-items:center;width:var(--s);height:var(--s);font-size:calc(var(--s)*.85);
-  pointer-events:none;z-index:60;animation:rescue-drive .8s ease-in-out both}
-@keyframes rescue-drive{0%,100%{transform:translate(0,0)}45%,60%{transform:translate(var(--dx),var(--dy)) scale(1.1)}}
-@media(prefers-reduced-motion:reduce){.rescue-drive{animation:none!important}}
 .ball{border-radius:50%;background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.75) 0 13%,rgba(255,255,255,0) 14%),var(--bc)}
 .basket{width:calc(var(--s)*1.3);min-height:calc(var(--s)*1.15);background:var(--bc);border:4px solid var(--ink);
   border-radius:16px 16px 40px 40px;box-shadow:0 6px 0 var(--ink);display:flex;flex-wrap:wrap;align-content:flex-end;
@@ -412,10 +395,6 @@ button.piece{cursor:pointer}
 }
 #home{overflow-y:auto}
 /* ---------- 救援大隊：選車 ---------- */
-#game.hub #progress{visibility:hidden}
-.rescue-hub{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;width:min(100%,420px);padding:10px 8px}
-.rescue-pick{flex-direction:row!important;justify-content:flex-start!important;gap:18px;padding:14px 22px!important;font-size:clamp(22px,6vw,30px)!important;min-height:96px}
-.rescue-pick .art,.rescue-pick .emoji{font-size:2.4em}
 /* ---------- 消防車滅火 ---------- */
 .fire-game{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .fire-scene{position:relative;width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-around}
@@ -435,15 +414,25 @@ button.piece{cursor:pointer}
 .fire-splash .art{width:100%;height:100%}
 /* ---------- 救護車貼 OK 繃 ---------- */
 .bandage-game{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-around}
-.bandage-patient{position:relative;width:var(--pet,300px);height:var(--pet,300px)}
-.bandage-patient>.bandage-animal{width:100%;height:100%;font-size:var(--pet,300px)}
+.bandage-patient{position:relative;width:var(--pet,300px);height:var(--pet,300px);touch-action:none}
+.bandage-patient>.bandage-animal{width:100%;height:100%;font-size:calc(var(--pet,300px)*.8)}
 .bandage-patient.healed-all>.bandage-animal{animation:boing .7s}
-.bandage-cut{position:absolute;width:calc(var(--pet,300px)*.27);height:calc(var(--pet,300px)*.27);transform:translate(-50%,-50%) rotate(var(--r,0deg));padding:0;display:grid;place-items:center}
-.bandage-cut .art,.bandage-cut .emoji{width:100%;height:100%;font-size:calc(var(--pet,300px)*.17)}
-.bandage-cut.healed{animation:pop .35s}
-.bandage-heart{position:absolute;left:50%;top:6%;width:30%;height:30%;transform:translateX(-50%);animation:boing .8s;pointer-events:none}
+/* 傷口：中心對準算好的位置（用 margin 置中，動畫的 transform 才不會把它推歪） */
+.bandage-cut{position:absolute;width:calc(var(--pet,300px)*.2);height:calc(var(--pet,300px)*.2);margin:calc(var(--pet,300px)*-.1) 0 0 calc(var(--pet,300px)*-.1);
+  display:grid;place-items:center;pointer-events:none}
+.bandage-cut>.art,.bandage-cut>.emoji{width:100%;height:100%;font-size:calc(var(--pet,300px)*.15);animation:wiggle 1.2s ease-in-out infinite}
+.bandage-cut::after{content:'';position:absolute;inset:-14%;border-radius:50%;border:4px solid #fff;box-shadow:0 0 0 3px #FF7F95;animation:cut-ring 1.4s ease-out infinite}
+@keyframes cut-ring{0%{transform:scale(.75);opacity:.95}100%{transform:scale(1.3);opacity:0}}
+.bandage-cut.healing::after,.bandage-cut.healed::after{display:none}
+.bandage-cut.healed>.art,.bandage-cut.healed>.emoji{width:150%;height:150%;max-width:none;flex:none;rotate:var(--r,0deg);animation:pop .35s}
+.bandage-fly{position:fixed;z-index:60;pointer-events:none;transition:transform .4s cubic-bezier(.3,.8,.4,1)}
+.bandage-fly>.art,.bandage-fly>.emoji{width:100%;height:100%;font-size:calc(var(--s)*.6)}
+.bandage-heart{position:absolute;left:35%;top:2%;width:30%;height:30%;animation:boing .8s;pointer-events:none}
 .bandage-heart .art{width:100%;height:100%}
-.bandage-tray{gap:10px}
+.bandage-bay{gap:12px;align-items:flex-end;flex-wrap:nowrap}
+.bandage-amb,.bandage-kit{width:var(--s);height:var(--s);display:grid;place-items:center;flex:none}
+.bandage-amb .art,.bandage-amb .emoji,.bandage-kit .art,.bandage-kit .emoji{width:100%;height:100%;font-size:calc(var(--s)*.8)}
+.bandage-kit{width:calc(var(--s)*1.15);height:calc(var(--s)*1.15)}
 .bandage-pad{border-radius:24%}
 /* ---------- 警車走迷宮 ---------- */
 .maze-game{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}

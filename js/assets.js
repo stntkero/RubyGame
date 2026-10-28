@@ -129,6 +129,9 @@ const ASSETS = {
   kitten_full_orange: { emoji: '🐱', img: 'assets/game/hide/kitten_full_orange.webp' },
   // 救援大隊三個小遊戲（Claude 用 SVG 畫的，tools/img/svg/）
   flame: { emoji: '🔥', img: 'assets/game/mini/flame.webp' }, smoke_puff: { emoji: '☁️', img: 'assets/game/mini/smoke_puff.webp' }, water_splash: { emoji: '💦', img: 'assets/game/mini/water_splash.webp' }, booboo: { emoji: '🩹', img: 'assets/game/mini/booboo.webp' }, bandage: { emoji: '🩹', img: 'assets/game/mini/bandage.webp' }, happy_heart: { emoji: '💖', img: 'assets/game/mini/happy_heart.webp' }, paw_print: { emoji: '🐾', img: 'assets/game/mini/paw_print.webp' }, bone: { emoji: '🦴', img: 'assets/game/mini/bone.webp' }, dog_house: { emoji: '🛖', img: 'assets/game/mini/dog_house.webp' }, maze_bush: { emoji: '🌳', img: 'assets/game/mini/maze_bush.webp' },
+  // 救護車貼 OK 繃：受傷的小病人（Codex 畫，哭哭／笑笑兩張）＋醫藥箱（Claude 畫）
+  first_aid_kit: { emoji: '🧰', img: 'assets/game/mini/first_aid_kit.webp' },
+  patient_rabbit: { emoji: '🐰', img: 'assets/game/mini/patient_rabbit.webp' }, patient_rabbit_happy: { emoji: '🐰', img: 'assets/game/mini/patient_rabbit_happy.webp' }, patient_bear: { emoji: '🐻', img: 'assets/game/mini/patient_bear.webp' }, patient_bear_happy: { emoji: '🐻', img: 'assets/game/mini/patient_bear_happy.webp' }, patient_cat: { emoji: '🐱', img: 'assets/game/mini/patient_cat.webp' }, patient_cat_happy: { emoji: '🐱', img: 'assets/game/mini/patient_cat_happy.webp' }, patient_dog: { emoji: '🐶', img: 'assets/game/mini/patient_dog.webp' }, patient_dog_happy: { emoji: '🐶', img: 'assets/game/mini/patient_dog_happy.webp' }, patient_panda: { emoji: '🐼', img: 'assets/game/mini/patient_panda.webp' }, patient_panda_happy: { emoji: '🐼', img: 'assets/game/mini/patient_panda_happy.webp' },
 };
 // Legacy sticker saves contain emoji strings. Keep their storage format intact.
 // Aliases (Ruby shares cat's fallback) keep the original sticker id.

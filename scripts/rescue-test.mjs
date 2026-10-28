@@ -4,9 +4,13 @@ import vm from 'node:vm';
 // 救援大隊三個小遊戲的純邏輯：關卡表、迷宮生成（每格都走得到、只有一條路）、路線搜尋
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const ctx=vm.createContext({GAMES:{},Math});
-for(const f of ['js/games/fire.js','js/games/bandage.js','js/games/maze.js','js/games/rescue.js'])vm.runInContext(read(f),ctx);
+for(const f of ['js/games/fire.js','js/games/bandage-spots.js','js/games/bandage.js','js/games/maze.js'])vm.runInContext(read(f),ctx);
 const {fireLevel,bandageLevel,mazeLevel,makeMaze,mazeCanMove,mazePath,GAMES}=ctx;
-for(const g of ['rescue','fire','bandage','maze'])assert.equal(typeof GAMES[g],'function',g);
+// 每隻小病人（一般圖和受傷版）都至少有兩個傷口位置，而且在圖裡面
+const SPOTS=vm.runInContext('BANDAGE_SPOTS_BY',ctx),PATIENTS=vm.runInContext('BANDAGE_PATIENTS',ctx);
+for(const id of PATIENTS)assert.ok(SPOTS[id]?.length>=2,id+' needs boo-boo spots');
+for(const [id,list] of Object.entries(SPOTS))for(const [x,y] of list)assert.ok(x>=5&&x<=95&&y>=5&&y<=95,id+' spot inside picture');
+for(const g of ['fire','bandage','maze'])assert.equal(typeof GAMES[g],'function',g);
 // 關卡越後面越難（不會變簡單）
 let prev={flames:0,hits:0,cuts:0,n:0};
 for(let L=2;L<=14;L++){
