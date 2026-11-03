@@ -37,6 +37,26 @@ function mazePath(walls,n,a,b){
   while(q.length){const c=q.shift();if(c===b)break;for(const d of [1,-1,n,-n]){const x=c+d;if(x>=0&&x<n*n&&!prev.has(x)&&mazeCanMove(walls,n,c,x)){prev.set(x,c);q.push(x)}}}
   const path=[];for(let c=b;c!==-1&&c!==undefined;c=prev.get(c))path.unshift(c);return path;
 }
+// 骨頭平均放在通往狗屋的路上（不含起點和狗屋）：一定會經過，邊走邊吃，也順便引導方向
+function mazeBones(walls,n,count){
+  const route=mazePath(walls,n,0,n*n-1),middle=route.slice(1,-1);
+  const out=[];
+  for(let k=1;k<=count&&middle.length;k++){
+    const c=middle[Math.min(middle.length-1,Math.round(k*(middle.length+1)/(count+1))-1)];
+    if(!out.includes(c))out.push(c);
+  }
+  return out;
+}
+// 只畫格子之間的牆（最外圈由棋盤邊框負責）；同一條線畫一次、圓頭，轉角才接得整齊
+function mazeWallPath(walls,n){
+  let d='';
+  walls.forEach((w,i)=>{
+    const x=i%n,y=Math.floor(i/n);
+    if(w.r&&x<n-1)d+=`M${x+1} ${y}V${y+1}`;
+    if(w.b&&y<n-1)d+=`M${x} ${y+1}H${x+1}`;
+  });
+  return d;
+}
 GAMES.maze = function(stage,L,done){
   const lv=mazeLevel(L),n=lv.n,g=gen,walls=makeMaze(n),goal=n*n-1;
   const root=div('maze-game'),board=div('maze-board');
@@ -44,13 +64,13 @@ GAMES.maze = function(stage,L,done){
   const later=(fn,ms)=>setTimeout(()=>{if(valid())fn()},ms);
   board.style.setProperty('--n',n);
   const cells=walls.map((w,i)=>{
-    const c=div('maze-cell');['t','r','b','l'].forEach(d=>{if(w[d])c.classList.add('w'+d)});
-    c.dataset.i=i;board.append(c);return c;
+    const c=div('maze-cell');c.dataset.i=i;board.append(c);return c;
   });
+  const wallLayer=div('maze-walls');
+  wallLayer.innerHTML=`<svg viewBox="0 0 ${n} ${n}" preserveAspectRatio="none" aria-hidden="true"><path d="${mazeWallPath(walls,n)}"/></svg>`;
+  board.append(wallLayer);
   cells[goal].innerHTML=art('dog_house','maze-home');
-  // 骨頭放在離起點最遠的幾個死路裡（撿到有獎勵音效，不撿也能過關）
-  const deadEnds=cells.map((c,i)=>i).filter(i=>i!==0&&i!==goal&&['t','r','b','l'].filter(d=>walls[i][d]).length===3);
-  const bones=new Set(pick(deadEnds,lv.bones));
+  const bones=new Set(mazeBones(walls,n,lv.bones));
   bones.forEach(i=>cells[i].insertAdjacentHTML('beforeend',art('bone','maze-bone')));
   const pup=div('maze-pup');pup.innerHTML=art('dog');board.append(pup);
   const car=div('maze-car');car.innerHTML=art('police_car');
@@ -76,7 +96,13 @@ GAMES.maze = function(stage,L,done){
     return true;
   };
   let dragging=false,blocked=-1;
-  const cellAt=(x,y)=>{const r=board.getBoundingClientRect();const cx=Math.floor((x-r.left)/r.width*n),cy=Math.floor((y-r.top)/r.height*n);return cx<0||cy<0||cx>=n||cy>=n?-1:cy*n+cx};
+  // 格子在邊框裡面，所以用內側寬高換算；手指壓在邊框上算最靠邊的那一格
+  const cellAt=(x,y)=>{
+    const r=board.getBoundingClientRect();
+    if(x<r.left||x>r.right||y<r.top||y>r.bottom)return -1;
+    const index=(p,size)=>Math.max(0,Math.min(n-1,Math.floor(p/size*n)));
+    return index(y-r.top-board.clientTop,board.clientHeight)*n+index(x-r.left-board.clientLeft,board.clientWidth);
+  };
   board.addEventListener('pointerdown',e=>{
     if(finished)return;e.preventDefault();
     const c=cellAt(e.clientX,e.clientY);

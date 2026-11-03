@@ -469,8 +469,10 @@ button.piece{cursor:pointer}
 .maze-car{width:84px;height:72px}
 .maze-car .art,.maze-car .emoji{width:100%;height:100%;font-size:60px}
 .maze-board{position:relative;width:var(--board,300px);height:var(--board,300px);display:grid;grid-template-columns:repeat(var(--n),1fr);grid-template-rows:repeat(var(--n),1fr);background:#F4FBEF;border:6px solid #3E9150;border-radius:18px;touch-action:none;box-shadow:0 6px 0 var(--ink)}
-.maze-cell{position:relative;display:grid;place-items:center;--wall:6px solid #3E9150}
-.maze-cell.wt{border-top:var(--wall)}.maze-cell.wr{border-right:var(--wall)}.maze-cell.wb{border-bottom:var(--wall)}.maze-cell.wl{border-left:var(--wall)}
+.maze-cell{position:relative;display:grid;place-items:center;min-width:0;min-height:0}
+.maze-walls{position:absolute;inset:0;z-index:2;pointer-events:none}
+.maze-walls svg{display:block;width:100%;height:100%;overflow:visible}
+.maze-walls path{fill:none;stroke:#3E9150;stroke-width:7px;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .maze-cell.visited::after{content:'';position:absolute;width:30%;height:30%;border-radius:50%;background:#FFB3CF;opacity:.7}
 .maze-home,.maze-bone{width:80%;height:80%;font-size:calc(var(--board,300px)/var(--n)*.6)}
 .maze-pup{position:absolute;left:0;top:0;width:calc(100%/var(--n));height:calc(100%/var(--n));transform:translate(calc(var(--x)*100%),calc(var(--y)*100%));transition:transform .18s ease-out;display:grid;place-items:center;pointer-events:none;z-index:3}
