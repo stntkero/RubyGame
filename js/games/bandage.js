@@ -42,7 +42,7 @@ GAMES.bandage = function(stage,L,done){
         const c=hitTarget(open(),x,y,26);
         if(!c){wrong(el);return false}
         stick(c);return true;
-      });
+      },{over:(x,y)=>hitTarget(open(),x,y,26)});
     }
   }else{
     bay.append(kit);
@@ -52,6 +52,8 @@ GAMES.bandage = function(stage,L,done){
       const c=hitTarget(open(),e.clientX,e.clientY,22);if(!c)return;
       e.preventDefault();fly(c);
     });
+    // 點醫藥箱也可以：OK 繃飛到下一個傷口
+    kit.addEventListener('click',()=>{if(!finished&&valid()&&open()[0])fly(open()[0])});
   }
   // OK 繃從醫藥箱飛到傷口上
   function fly(c){

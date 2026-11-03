@@ -61,6 +61,8 @@ function homePurchase(id,button){
 function homeItemButton(it,shop=false){
   const b=document.createElement('button'),owned=homeState.owned.includes(it.id);
   b.className='home-item';b.dataset.item=it.id;
+  // 星星不夠的先變淡（還是可以點，會提醒再去玩）
+  if(!owned&&homePrice(it.id)>homeState.stars)b.classList.add('too-dear');
   b.setAttribute('aria-label',it.n+(owned?'，已擁有':`，${homePrice(it.id)}顆星星`));
   b.innerHTML=art(it.id)+(owned?'<span class="owned-mark" aria-hidden="true">✓</span>':homePriceTag(it.id));
   if(!shop){b.setAttribute('aria-pressed',String(!!homeState.worn[it.id]))}
@@ -99,7 +101,9 @@ function renderHouse(){
 function renderRoom(content){
   const scene=div('room-scene');scene.id='roomScene';scene.setAttribute('aria-label','露比的房間');
   const ruby=rubyFigure('room-ruby');scene.append(ruby);
-  const cart=document.createElement('button');cart.className='icon-btn room-cart';cart.setAttribute('aria-label','商店');cart.innerHTML=art('cart');cart.onclick=openHomeShop;scene.append(cart);
+  const hasFurniture=ROOM_ITEMS.some(it=>homeState.owned.includes(it.id));
+  // 還沒有家具時商店按鈕會晃，引導去買
+  const cart=document.createElement('button');cart.className='icon-btn room-cart'+(hasFurniture?'':' wiggle');cart.setAttribute('aria-label','商店');cart.innerHTML=art('cart');cart.onclick=openHomeShop;scene.append(cart);
   const tray=div('room-tray');tray.id='roomTray';tray.setAttribute('aria-label','收納盒，把家具拖進房間');
   tray.innerHTML=art('store_tray','tray-hint');
   ROOM_ITEMS.filter(it=>homeState.owned.includes(it.id)).forEach(it=>{
@@ -108,7 +112,10 @@ function renderRoom(content){
     if(placement){positionRoomObject(b,placement);scene.append(b)}
     else {b.dataset.trayItem=it.id;tray.append(b)}
     roomDraggable(b,it.id,scene,tray);
-  });content.append(scene,tray);
+  });
+  content.append(scene,tray);
+  // 收納盒裡有家具就示範一次「拖進房間」
+  setTimeout(()=>{const first=tray.querySelector('.room-object');if(first&&first.isConnected&&scene.isConnected&&$('#houseShop').hidden)hintDrag(first,scene)},1200);
   roomWalker=walkRoomRuby(scene,ruby,content);
 }
 // 找出手指點到的是哪件配件：「穿在身上」的圖層蓋住整隻露比，所以要看該點的圖片是不是透明的
@@ -270,9 +277,11 @@ function initRubyHome(){
   if(Array.isArray(room))room.forEach(p=>{if(p)homePlace(homeState,p.id,p.x,p.y)});
   const icons={wardrobe:'wardrobe',room:'room_tab',stickers:'sticker_album'},labels={wardrobe:'衣櫃',room:'房間',stickers:'貼紙'};
   document.querySelectorAll('[data-house-tab]').forEach(b=>{
+    // 貼紙簿是舊版留下的：現在不再發貼紙，只有舊存檔裡有貼紙才顯示
+    if(b.dataset.houseTab==='stickers')b.hidden=!store.get('stickers',[]).length;
     b.innerHTML=art(icons[b.dataset.houseTab]);b.onclick=()=>{
       sfx.pop();houseTab=b.dataset.houseTab;renderHouse();
-      if(houseTab==='room')say('把家具拖進房間');
+      if(houseTab==='room')say(ROOM_ITEMS.some(it=>homeState.owned.includes(it.id))?'把家具拖進房間':'去商店買家具吧');
     };
   });
   const open=()=>{homeState.stars=stars;sfx.pop();show('house');renderHouse()};

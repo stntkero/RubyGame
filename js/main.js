@@ -8,9 +8,15 @@ const PROMPT_EVERY_ROUND={pattern:1,size:1};
 const stage=$('#stage');
 let current=null,round=0,gen=0,relayout=null;
 function show(id){if(id!=='house')stopRoomRuby();['home','game','house'].forEach(x=>$('#'+x).hidden=x!==id);resetHomeRubyIdle()}
-function renderProgress(){
+// 進度用星星表示：過一關亮一顆，也就是真的賺到一顆可以去露比的家用的星星
+function renderProgress(earned=false){
   const p=$('#progress');p.innerHTML='';
-  for(let i=0;i<5;i++){const d=document.createElement('i');if(i<round%5)d.className='on';p.append(d)}
+  const lit=earned&&round%5===0?5:round%5;
+  for(let i=0;i<5;i++){
+    const d=document.createElement('i');d.innerHTML=art('star');
+    if(i<lit)d.className='on'+(earned&&i===lit-1?' new':'');
+    p.append(d);
+  }
 }
 function nextRound(){
   stopHints();gen++;renderProgress();stage.innerHTML='';
@@ -22,7 +28,7 @@ function nextRound(){
 function roundDone(){
   stopHints();
   const g=gen;
-  stars++;store.set('stars',stars);round++;renderProgress();
+  stars++;store.set('stars',stars);round++;renderProgress(true);
   const big=round%5===0;
   setTimeout(()=>{
     if(g!==gen)return;
@@ -80,3 +86,10 @@ if(location.protocol.startsWith('http')&&location.hostname!=='localhost'&&'servi
 }
 // 預先載入露比的表情圖，換表情時不會閃一下
 addEventListener('load',()=>['ruby_cheer','ruby_comfort','ruby_eat','ruby_sleep','walk_1','walk_2','walk_3','walk_4'].forEach(id=>{const src=ASSETS[id]&&ASSETS[id].img;if(src)new Image().src=src}),{once:true});
+// 其他圖在背景一張一張先載好（離線快取也會存起來），第一次進遊戲才不會空白一下
+addEventListener('load',()=>{
+  const queue=Object.values(ASSETS).map(a=>a.img).filter(Boolean);
+  const next=()=>{const src=queue.shift();if(!src)return;const im=new Image();im.onload=im.onerror=()=>setTimeout(next,30);im.src=src};
+  setTimeout(next,1500);
+},{once:true});
+if(navigator.standalone)document.documentElement.classList.add('standalone');

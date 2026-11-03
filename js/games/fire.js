@@ -19,22 +19,32 @@ GAMES.fire = function(stage,L,done){
   const flames=pick(FIRE_SPOTS,lv.flames).map(([x,y])=>{
     const f=document.createElement('button');f.className='fire-flame';f.setAttribute('aria-label','火');
     f.style.left=x+'%';f.style.top=y+'%';f.innerHTML=art('flame');f.hp=lv.hits;
-    f.addEventListener('pointerdown',e=>{e.preventDefault();spray(f)});
     house.append(f);return f;
   });
   const burning=()=>flames.filter(f=>f.hp>0);
   const paint=f=>f.style.setProperty('--k',f.hp>0?(.45+.55*f.hp/lv.hits).toFixed(2):'0');
   flames.forEach(paint);
-  // 水柱：從消防車的水管畫一條線到火焰，再在火焰上濺出水花
-  function spray(f){
-    if(finished||!valid()||f.hp<=0)return;
-    const a=truck.getBoundingClientRect(),b=f.getBoundingClientRect(),s=scene.getBoundingClientRect();
-    const x0=a.left+a.width*.78-s.left,y0=a.top+a.height*.3-s.top,x1=b.left+b.width/2-s.left,y1=b.top+b.height*.6-s.top;
+  // 點哪裡水就噴到哪裡；點在火焰附近就算噴到（小手不容易點準）
+  scene.addEventListener('pointerdown',e=>{
+    if(finished||!valid())return;
+    e.preventDefault();
+    const f=hitTarget(burning(),e.clientX,e.clientY,16);
+    if(f)spray(f);else jetTo(e.clientX,e.clientY);
+  });
+  // 水柱：從消防車的水管畫一條線到目標，再濺出水花
+  function jetTo(cx,cy){
+    const a=truck.getBoundingClientRect(),s=scene.getBoundingClientRect();
+    const x0=a.left+a.width*.78-s.left,y0=a.top+a.height*.3-s.top,x1=cx-s.left,y1=cy-s.top;
     const jet=div('fire-jet');jet.style.left=x0+'px';jet.style.top=y0+'px';
     jet.style.width=Math.hypot(x1-x0,y1-y0)+'px';jet.style.transform=`rotate(${Math.atan2(y1-y0,x1-x0)}rad)`;
     const splash=div('fire-splash');splash.innerHTML=art('water_splash');splash.style.left=x1+'px';splash.style.top=y1+'px';
     scene.append(jet,splash);later(()=>{jet.remove();splash.remove()},380);
     [900,700,520].forEach((fr,i)=>tone(fr,.09,'sine',i*.04,.12));buzz(15);
+  }
+  function spray(f){
+    if(finished||!valid()||f.hp<=0)return;
+    const b=f.getBoundingClientRect();
+    jetTo(b.left+b.width/2,b.top+b.height*.6);
     f.hp--;paint(f);
     if(f.hp>0)return;
     // 熄了：冒一朵煙

@@ -42,7 +42,7 @@ function setup(diff=1,reduceMotion=false){
   vm.runInContext(hintCode,ctx);
   return {ctx,stage,body,observers,...time};
 }
-for(const diff of [1]){ // 只有「普通」有示範
+for(const diff of [1]){ // 普通：5 秒就示範
   const t=setup(diff);let calls=0;
   const from=t.stage.firstElementChild,to=new Element();
   const stop=t.ctx.idleHint(()=>{calls++;return {from,to}});
@@ -56,7 +56,8 @@ for(const diff of [1]){ // 只有「普通」有示範
   assert.equal(t.timers.size,0);assert.equal(t.stage.events.pointerdown.size,0);
 }
 {
-  const t=setup(2);t.ctx.idleHint(()=>assert.fail('Challenge must not hint'));t.advance(30000);assert.equal(t.timers.size,0);
+  // 挑戰、超級挑戰：讓小孩先自己想，卡很久才示範
+  for(const [d,wait] of [[2,20000],[3,30000]]){const t=setup(d);let calls=0;t.ctx.idleHint(()=>{calls++});t.advance(wait-1);assert.equal(calls,0);t.advance(1);assert.equal(calls,1);t.advance(wait);assert.equal(calls,2)}
 }
 for(const stale of ['generation','clear','stop']){
   const t=setup();let calls=0;t.ctx.idleHint(()=>{calls++;return {tap:t.stage.firstElementChild}});
@@ -137,7 +138,7 @@ for(const L of [0,2,5,9]){
 }
 for(const L of [0,2,3,4,8]){
   const t=game('shop',L),kids=t.stage.children,errand=L<4;
-  const [req,shelf,tray]=errand?kids:[null,...kids];
+  const [req,shelf,counter]=errand?kids:[null,...kids],tray=counter.children[0];
   const first=t.pair();assert.ok(shelf.children.includes(first.tap));
   if(errand)assert.ok(req.innerHTML.includes(first.tap.innerHTML.match(/^\[[^\]]+\]/)[0]));
   // 先把東西放進購物車（提示會一樣一樣指），結帳後一次投幣付清
@@ -155,6 +156,26 @@ for(const L of [0,3,6]){
   t.advance(1000);assert.equal(t.finished(),1);
   const p=game('pattern',L);assert.ok(p.stage.children[1].children.includes(p.pair().tap));p.pair().tap.click();
   assert.ok(p.stage.children[0].children.at(-1).classList.contains('filled'));assert.ok(!p.pair());p.advance(700);assert.equal(p.finished(),1);assert.equal(p.wrong(),0);
+}
+// 真正的拖曳：沒移動算「點」、有移動才算放下；手指經過的目標會亮、放開就熄
+{
+  const code=core.slice(core.indexOf('const TAP_SLOP'),core.indexOf('function hitTarget'));
+  const hinted=[];
+  const ctx=vm.createContext({sfx:{pop(){}},diff:1,hintNow:el=>hinted.push(el)});
+  vm.runInContext(code,ctx);
+  const piece=()=>{const el=new Element('piece');el.setPointerCapture=()=>{};el.offsetWidth=1;
+    el.send=(n,x=0,y=0)=>{for(const f of [...(el.events[n]||[])])f({type:n,clientX:x,clientY:y,pointerId:1,preventDefault(){}})};return el};
+  let drops=0;const noDrop=()=>{drops++;return true};
+  const a=piece();ctx.makeDraggable(a,noDrop);
+  a.send('pointerdown',50,50);a.send('pointermove',53,52);a.send('pointerup',53,52);
+  assert.equal(drops,0,'A small wobble is a tap, not a drop');assert.ok(a.classList.contains('hop'));assert.deepEqual(hinted,[a]);assert.ok(!a.classList.contains('placed'));
+  const b=piece(),target=new Element('slot');ctx.makeDraggable(b,noDrop,{over:()=>target});
+  b.send('pointerdown',50,50);b.send('pointermove',120,90);assert.ok(target.classList.contains('drop-over'));
+  b.send('pointerup',120,90);assert.equal(drops,1);assert.ok(b.classList.contains('placed'));assert.ok(!target.classList.contains('drop-over'));
+  const c=piece();let taps=0;ctx.makeDraggable(c,noDrop,{tap:()=>{taps++;return true}});
+  c.send('pointerdown',50,50);c.send('pointerup',50,50);assert.equal(taps,1);assert.ok(c.classList.contains('placed'));
+  const d=piece();ctx.makeDraggable(d,noDrop);
+  d.send('pointerdown',50,50);d.send('pointermove',120,90);d.send('pointercancel',120,90);assert.equal(drops,1,'A cancelled gesture must not drop');assert.equal(d.style.transform,'');
 }
 const css=read('css/style.css');assert.match(css,/z-index:90/);assert.match(css,/animation-timing-function:ease-in-out/);
 assert.match(css,/\.hint-paw\.hint-still\{animation:hint-blink 2\.2s steps\(1,end\) forwards!important\}/);

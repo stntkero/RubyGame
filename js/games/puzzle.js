@@ -42,7 +42,7 @@ GAMES.puzzle = function(stage,L,done){
   board.append(complete);frame.append(board);
   shuffle(Array.from({length:count},(_,i)=>i)).forEach((index,i)=>{
     const piece=div('piece puzzle-tile');paintTile(piece,index);
-    if(round===0&&diff===0&&i===0)piece.classList.add('wiggle');
+    if(round===0&&diff===1&&i===0)piece.classList.add('wiggle');
     tray.append(piece);
     hintMoves.push({from:piece,to:cells[index]});
     makeDraggable(piece,(el,x,y)=>{
@@ -56,10 +56,10 @@ GAMES.puzzle = function(stage,L,done){
         setTimeout(()=>{if(root.isConnected)done()},800);
       }
       return true;
-    });
+    },{over:(x,y)=>cells[puzzleCell(layout,board.getBoundingClientRect(),x,y)]});
   });
   root.append(frame,tray);stage.append(root);
-  idleHint(()=>!finished&&hintMoves.find(m=>!m.to.classList.contains('filled')));
+  idleHint(el=>!finished&&(hintMoves.find(m=>m.from===el)||hintMoves.find(m=>!m.to.classList.contains('filled'))));
   return ()=>{
     const style=getComputedStyle(stage);
     const width=stage.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);

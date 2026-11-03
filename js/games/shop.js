@@ -23,14 +23,15 @@ GAMES.shop = function(stage,L,done){
   const shelf=div('shelf');
   const tray=div('tray');
   const total=div('shop-total');
-  const wallet=div('row shop-wallet');wallet.innerHTML=art('purse','wallet-purse');
+  const wallet=div('row shop-wallet waiting');wallet.innerHTML=art('purse','wallet-purse');
+  const counter=div('shop-counter');
   const cart=[],hintItems=[],coins=[];
   let phase='pick',paid=0,finished=false;
   const sum=()=>cart.reduce((s,it)=>s+it.p,0);
   const canAddMore=()=>hintItems.some(({it})=>!cart.includes(it)&&sum()+it.p<=money);
-  // 收銀台：自由購物時，放好東西後按這裡結帳
-  const checkout=document.createElement('button');checkout.className='shelf-item shop-checkout';checkout.hidden=true;
-  checkout.innerHTML=art('store');checkout.setAttribute('aria-label','結帳');
+  // 櫃台上的鈴鐺：自由購物時放好東西按一下結帳（和餵露比的「好了」鈴鐺一樣）
+  const checkout=document.createElement('button');checkout.className='feed-bell shop-checkout wiggle';checkout.hidden=true;
+  checkout.innerHTML=art('bell');checkout.setAttribute('aria-label','結帳');
   const paintTray=()=>{
     if(phase!=='pick')return;
     tray.innerHTML=cart.length?cart.map(it=>art(it.id,'goods')).join(''):art('cart','placeholder');
@@ -39,7 +40,7 @@ GAMES.shop = function(stage,L,done){
   };
   const startPay=()=>{
     if(phase!=='pick'||!cart.length||finished)return;
-    phase='pay';checkout.hidden=true;shelf.classList.add('shop-closed');
+    phase='pay';checkout.hidden=true;shelf.classList.add('shop-closed');wallet.classList.remove('waiting');
     tray.innerHTML=cart.map(it=>art(it.id,'goods')).join('')+(showSlots?'<div class="coin-slot"></div>'.repeat(sum()):'');
     say('一共'+NUMS[sum()-1]+'個金幣');
   };
@@ -60,12 +61,13 @@ GAMES.shop = function(stage,L,done){
     });
     shelf.append(b);hintItems.push({el:b,it});
   });
-  if(!errand)shelf.append(checkout);
+  counter.append(tray);if(!errand)counter.append(checkout);
   for(let i=0;i<money;i++){
     const c=div('piece coin');wallet.append(c);coins.push(c);
-    makeDraggable(c,(el,x,y)=>{
-      if(finished||!hitTarget([tray],x,y))return false;
-      if(phase!=='pay'){wrong(shelf);say(cart.length?'先結帳喔':'先選要買的東西');return false}
+    const pay=()=>{
+      if(finished)return false;
+      // 還沒到付錢的時候金幣是暗的，碰到只提醒下一步，不算做錯
+      if(phase!=='pay'){say(cart.length?'先結帳喔':'先選要買的東西');return false}
       if(paid>=sum()){wrong(tray);return false}
       paid++;
       if(showSlots)tray.querySelectorAll('.coin-slot')[paid-1].classList.add('coin');else tray.innerHTML+='<i class="coin mini"></i>';
@@ -79,10 +81,12 @@ GAMES.shop = function(stage,L,done){
         setTimeout(done,1800);
       }
       return true;
-    });
+    };
+    // 金幣都一樣，重點是數數，所以點一下也能付
+    makeDraggable(c,(el,x,y)=>hitTarget([tray],x,y)?pay():false,{over:(x,y)=>phase==='pay'?hitTarget([tray],x,y):null,tap:pay});
   }
   paintTray();
-  stage.append(...(req?[req]:[]),shelf,tray,total,wallet);
+  stage.append(...(req?[req]:[]),shelf,counter,total,wallet);
   setTimeout(()=>say(errand?'幫我買'+targets.map(t=>t.n).join('和'):'你有'+NUMS[money-1]+'個金幣，想買什麼呢？'),250);
   idleHint(()=>{
     if(finished)return;
@@ -94,5 +98,6 @@ GAMES.shop = function(stage,L,done){
     }
     if(paid<sum())return {from:coins.find(c=>!c.classList.contains('placed')),to:tray};
   });
-  return ()=>stage.style.setProperty('--s',sizeFor(stage,5,5.4+Math.ceil(money/5)*.9)+'px');
+  // 貨架和錢包用掉最多高度：跑腿多一排清單；金幣一排 5 個
+  return ()=>stage.style.setProperty('--s',sizeFor(stage,Math.min(shelfItems.length,4),(req?.9:0)+Math.ceil(shelfItems.length/4)*1.45+1.55+Math.ceil(money/5)*.85)+'px');
 };

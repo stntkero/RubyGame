@@ -10,7 +10,7 @@ GAMES.color = function(stage,L,done){
   const balls=shuffle(cols.flatMap(c=>Array(per).fill(c)));
   balls.forEach((c,i)=>{
     const p=div('piece ball');p.style.setProperty('--bc',c.c);p.setAttribute('aria-label',c.n);
-    if(round===0&&diff===0&&i===0)p.classList.add('wiggle');
+    if(round===0&&diff===1&&i===0)p.classList.add('wiggle');
     bottom.append(p);
     hintMoves.push({from:p,to:baskets.find(b=>b.dataset.key===c.k)});
     makeDraggable(p,(el,x,y)=>{
@@ -21,10 +21,10 @@ GAMES.color = function(stage,L,done){
       sfx.ok();buzz(30);say(c.n);
       if(--left===0)done();
       return true;
-    });
+    },{over:(x,y)=>hitTarget(baskets,x,y)});
   });
   stage.append(top,bottom);
-  idleHint(()=>hintMoves.find(m=>!m.from.classList.contains('placed')));
+  idleHint(el=>hintMoves.find(m=>m.from===el)||hintMoves.find(m=>!m.from.classList.contains('placed')));
   // 球多（超級挑戰最多 18 顆）時一排放 6 顆；籃子寬 1.3 倍，一排最多 3～4 個
   return ()=>{
     const balls=nc*per,perRow=balls>8?6:Math.min(balls,4),basketRows=Math.ceil(nc/(nc>4?3:4));

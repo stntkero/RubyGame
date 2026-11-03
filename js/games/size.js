@@ -1,7 +1,7 @@
 GAMES.size = function(stage,L,done){
   const n=L<2?3:L<5?4:L<8?5:L<10?6:7,hint=L<4;
   const it=pick(THINGS,1)[0];
-  const k=i=>(.4+.6*i/(n-1)).toFixed(2);
+  const k=i=>(.5+.5*i/(n-1)).toFixed(2);
   const bar=div('scale-hint');
   bar.innerHTML=`${art(it.id, 'small-hint')}${art('arrow', 'arrow')}${art(it.id)}`;
   const top=div('row'),bottom=div('row');
@@ -16,7 +16,7 @@ GAMES.size = function(stage,L,done){
   const hintMoves=[];
   shuffle([...Array(n).keys()]).forEach((r,j)=>{
     const p=div('piece');p.style.setProperty('--k',k(r));p.innerHTML=art(it.id);
-    if(round===0&&diff===0&&j===0)p.classList.add('wiggle');
+    if(round===0&&diff===1&&j===0)p.classList.add('wiggle');
     bottom.append(p);
     hintMoves.push({from:p,to:slots[r]});
     makeDraggable(p,(el,x,y)=>{
@@ -27,9 +27,9 @@ GAMES.size = function(stage,L,done){
       sfx.ok();buzz(30);
       if(--left===0)done();
       return true;
-    });
+    },{over:(x,y)=>hitTarget(slots.filter(s=>!s.classList.contains('filled')),x,y)});
   });
   stage.append(bar,top,bottom);
-  idleHint(()=>hintMoves.find(m=>!m.from.classList.contains('placed')&&m.to===slots.find(s=>!s.classList.contains('filled'))));
+  idleHint(el=>hintMoves.find(m=>m.from===el)||hintMoves.find(m=>!m.from.classList.contains('placed')&&m.to===slots.find(s=>!s.classList.contains('filled'))));
   return ()=>stage.style.setProperty('--s',sizeFor(stage,Math.min(n,5),3.6)+'px');
 };

@@ -77,31 +77,55 @@ document.addEventListener('pointerdown',()=>{
   Object.values(VOICE_FILES).reduce((p,f)=>p.then(()=>loadVoice(f)).catch(()=>{}),Promise.resolve());
 },{once:true,capture:true});
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
-function makeDraggable(el,onDrop){
+// 拖曳時 東西浮在手指上方，才不會被手指蓋住；移動不到 TAP_SLOP 算「點一下」
+const TAP_SLOP=10,DRAG_LIFT=22;
+// over(x,y)：回傳手指底下的放置目標（拖曳時亮起來）
+// tap(el)：點一下要做什麼，回傳 true 表示東西已經放好；沒有給就跳一下並示範怎麼拖
+function makeDraggable(el,onDrop,{over,tap}={}){
   el.addEventListener('pointerdown',e=>{
     if(el.classList.contains('placed'))return;
     e.preventDefault();
     try{el.setPointerCapture(e.pointerId)}catch(_){}
     el.classList.remove('wiggle');
     const sx=e.clientX,sy=e.clientY;
+    let moved=false,hot=null;
     el.classList.add('dragging');sfx.pop();
-    const move=ev=>{el.style.transform=`translate(${ev.clientX-sx}px,${ev.clientY-sy}px) scale(1.15)`};
-    const up=()=>{
+    const setHot=t=>{if(t===hot)return;hot?.classList.remove('drop-over');hot=t||null;hot?.classList.add('drop-over')};
+    const center=()=>{const r=el.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]};
+    const place=(dx,dy)=>{el.style.transform=`translate(${dx}px,${dy-DRAG_LIFT}px) scale(1.15)`};
+    const move=ev=>{
+      const dx=ev.clientX-sx,dy=ev.clientY-sy;
+      if(Math.hypot(dx,dy)>=TAP_SLOP)moved=true;
+      place(dx,dy);
+      if(over&&moved)setHot(over(...center()));
+    };
+    const up=ev=>{
       el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);
-      el.classList.remove('dragging');
-      const r=el.getBoundingClientRect();
-      const ok=onDrop(el,r.left+r.width/2,r.top+r.height/2);
+      el.classList.remove('dragging');setHot(null);
+      let ok=false;
+      if(ev.type==='pointerup'){
+        if(moved)ok=onDrop(el,...center());
+        else if(tap)ok=tap(el);
+        else nudge(el);
+      }
       el.style.transform='';
       if(ok)el.classList.add('placed');
     };
+    place(0,0);
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
   });
+}
+// 小孩常常只點一下而不是拖：跳一下表示「可以拿起來」，普通難度再示範拖到哪裡
+function nudge(el){
+  el.classList.remove('hop');void el.offsetWidth;el.classList.add('hop');
+  if(diff===1)hintNow(el);
 }
 function hitTarget(targets,x,y,pad=24){
   return targets.find(t=>{const r=t.getBoundingClientRect();return x>r.left-pad&&x<r.right+pad&&y>r.top-pad&&y<r.bottom+pad});
 }
 // Hints demonstrate a move without changing game state.
 const hintStops=new Set();
+let hintNow=()=>{};
 function stopHints(){for(const stop of [...hintStops])stop()}
 function hintDrag(fromEl,toEl){
   if(!fromEl?.isConnected||!toEl?.isConnected)return ()=>{};
@@ -126,21 +150,29 @@ function hintDrag(fromEl,toEl){
   return stop;
 }
 function hintTap(el){return hintDrag(el,el)}
-function idleHint(getPair,{first=5000,every=8000}={}){
-  if(diff!==1)return ()=>{};
+// 普通很快就示範；挑戰、超級挑戰讓小孩先自己想，但卡很久還是會幫忙，不會一直卡住
+const HINT_DELAY={2:20000,3:30000};
+function idleHint(getPair,{first,every=8000}={}){
+  const wait=HINT_DELAY[diff];
+  if(wait){first=wait;every=wait}
+  else if(first===undefined)first=typeof round==='number'&&round===0?3000:5000;
   const g=gen,anchor=stage.firstElementChild;
   let timer=0,animation=()=>{},stopped=false;
   const valid=()=>g===gen&&stage.isConnected&&anchor?.isConnected;
   const stop=()=>{
     if(stopped)return;stopped=true;clearTimeout(timer);animation();
     stage.removeEventListener('pointerdown',reset,true);observer.disconnect();hintStops.delete(stop);
+    if(hintNow===playNow)hintNow=()=>{};
   };
-  const play=()=>{
-    if(!valid()||(diff!==1)){stop();return}
-    const pair=getPair();animation();
+  const play=prefer=>{
+    if(!valid()){stop();return}
+    clearTimeout(timer);
+    const pair=getPair(prefer);animation();
     if(pair)animation=pair.tap?hintTap(pair.tap):hintDrag(pair.from,pair.to);
     timer=setTimeout(play,every);
   };
+  const playNow=el=>play(el);
+  hintNow=playNow;
   const reset=()=>{clearTimeout(timer);animation();if(valid())timer=setTimeout(play,first);else stop()};
   const observer=new MutationObserver(()=>{if(!valid())stop()});
   observer.observe(stage,{childList:true});

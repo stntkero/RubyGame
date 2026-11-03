@@ -63,14 +63,16 @@ GAMES.feed = function(stage,L,done){
   for(let i=0;i<total;i++){
     const piece=div('piece feed-fish');piece.innerHTML=art('fish');
     piece.setAttribute('aria-label','魚');fish.push(piece);pile.append(piece);
-    makeDraggable(piece,(el,x,y)=>{
-      if(finished||fed.includes(i)||!root.isConnected||!hitTarget([bowl],x,y,12))return false;
+    const feedOne=()=>{
+      if(finished||fed.includes(i)||!root.isConnected)return false;
       interacted=true;
       fed.push(i);ruby.classList.remove('wiggle');renderBowl(i);
       tone(1250,.08,'triangle');tone(1650,.12,'triangle',.06);buzz(20);countAloud();
       if(showSlots&&fed.length===needed)celebrate();
       return true;
-    });
+    };
+    // 魚都一樣，重點是數數，所以點一下也能放進碗裡
+    makeDraggable(piece,(el,x,y)=>hitTarget([bowl],x,y,12)?feedOne():false,{over:(x,y)=>hitTarget([bowl],x,y,12),tap:feedOne});
   }
   const mid=div('feed-mid');mid.append(bowl);
   root.append(top,mid,pile);

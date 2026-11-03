@@ -11,7 +11,7 @@ GAMES.shadow = function(stage,L,done){
   const hintMoves=[];
   shuffle(items).forEach((it,i)=>{
     const p=div('piece');p.innerHTML=`${art(it.id)}`;
-    if(round===0&&diff===0&&i===0)p.classList.add('wiggle');
+    if(round===0&&diff===1&&i===0)p.classList.add('wiggle');
     bottom.append(p);
     hintMoves.push({from:p,to:targets.find(t=>t.dataset.key===it.id)});
     makeDraggable(p,(el,x,y)=>{
@@ -21,10 +21,10 @@ GAMES.shadow = function(stage,L,done){
       t.classList.add('filled');sfx.ok();buzz(30);say(it.n);
       if(--left===0)done();
       return true;
-    });
+    },{over:(x,y)=>hitTarget(targets.filter(t=>!t.classList.contains('filled')),x,y)});
   });
   stage.append(top,bottom);
-  idleHint(()=>hintMoves.find(m=>!m.from.classList.contains('placed')));
+  idleHint(el=>hintMoves.find(m=>m.from===el)||hintMoves.find(m=>!m.from.classList.contains('placed')));
   return ()=>{const T=n+decoys,c=Math.min(Math.max(T,n),4);
     stage.style.setProperty('--s',sizeFor(stage,c,Math.ceil(T/4)+Math.ceil(n/4)+1.2)+'px')};
 };

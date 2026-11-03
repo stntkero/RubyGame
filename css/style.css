@@ -1,13 +1,16 @@
 :root{
   --sky:#CDEBFF;--meadow:#BFE7C9;--sun:#FFD35C;--berry:#FF7AA8;--ink:#2F3A68;--paper:#FFFDF7;
   --hole:rgba(47,58,104,.10);--dash:rgba(47,58,104,.35);--shade:brightness(0) opacity(.28);
+  --tile:#FFFDF7;--tile-ink:#2F3A68;--tile-edge:#2F3A68;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --tile-edge:#8E97D6;
   --sky:#27305A;--meadow:#2A4A40;--sun:#E8B940;--berry:#E06592;--ink:#F3F0FF;--paper:#39427A;
   --hole:rgba(255,255,255,.08);--dash:rgba(255,255,255,.35);--shade:brightness(0) invert(1) opacity(.35);
 }}
 :root[data-theme="dark"]{
+  --tile-edge:#8E97D6;
   --sky:#27305A;--meadow:#2A4A40;--sun:#E8B940;--berry:#E06592;--ink:#F3F0FF;--paper:#39427A;
   --hole:rgba(255,255,255,.08);--dash:rgba(255,255,255,.35);--shade:brightness(0) invert(1) opacity(.35);
 }
@@ -74,25 +77,26 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
 .diff button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .parent-tip{text-align:center;font-size:14px;opacity:.75;margin:0 24px 14px;line-height:1.6}
 
-.progress{display:flex;gap:10px}
-.progress i{width:20px;height:20px;border-radius:50%;border:3px solid var(--ink);background:var(--paper);transition:background .3s}
-.progress i.on{background:var(--sun)}
+.progress{display:flex;gap:6px;background:rgba(255,253,247,.85);border-radius:999px;padding:4px 10px}
+.progress i{display:grid;place-items:center;width:30px;height:30px;font-size:28px;font-style:normal;filter:grayscale(1) opacity(.3);transition:filter .3s}
+.progress i.on{filter:none}
+.progress i.new{animation:boing .7s}
 .spacer{width:52px}
 .stage{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;align-items:center;padding:6px 12px 16px;--s:100px}
 .row{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;max-width:100%}
 
 .slot,.piece{width:var(--s);height:var(--s);border-radius:28%;display:grid;place-items:center;position:relative}
 .slot .emoji,
-.slot .art,.piece .emoji,.piece .art{font-size:calc(var(--s)*.66*var(--k,1))}
+.slot .art,.piece .emoji,.piece .art{font-size:calc(var(--s)*.78*var(--k,1))}
 .slot{background:var(--hole);border:4px dashed var(--dash)}
 .slot.shadow .emoji,
 .slot.shadow .art{filter:var(--shade)}
-.slot.filled{background:var(--paper);border:4px solid var(--ink);animation:pop .4s}
+.slot.filled{background:var(--tile);border:4px solid var(--tile-edge);animation:pop .4s}
 .slot.filled .emoji,
 .slot.filled .art{filter:none}
-.piece{background:var(--paper);border:4px solid var(--ink);box-shadow:0 6px 0 var(--ink);touch-action:none;
+.piece{background:var(--tile);border:4px solid var(--tile-edge);box-shadow:0 6px 0 var(--tile-edge);touch-action:none;
   transition:transform .28s cubic-bezier(.3,1.4,.5,1);cursor:grab}
-.piece.dragging{transition:none;z-index:50;box-shadow:0 14px 0 var(--ink);cursor:grabbing}
+.piece.dragging{transition:none;z-index:50;box-shadow:0 14px 0 var(--tile-edge);cursor:grabbing}
 .piece.placed{visibility:hidden}
 .ball{border-radius:50%;background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.75) 0 13%,rgba(255,255,255,0) 14%),var(--bc)}
 .basket{width:calc(var(--s)*1.3);min-height:calc(var(--s)*1.15);background:var(--bc);border:4px solid var(--ink);
@@ -107,24 +111,24 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
 .card .face{position:absolute;inset:0;border:4px solid var(--ink);border-radius:24%;display:grid;place-items:center;
   backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 6px 0 var(--ink)}
 .card .back{background:radial-gradient(circle,rgba(255,255,255,.55) 0 18%,transparent 19%) 0 0/28% 28%,var(--berry)}
-.card .front{background:var(--paper);transform:rotateY(180deg)}
+.card .front{background:var(--tile);transform:rotateY(180deg)}
 .card .front .emoji,
 .card .front .art{font-size:calc(var(--s)*.6)}
 .card.matched .front{background:var(--sun)}
 .card.matched{animation:pop .45s}
 
 /* 商店 */
-.request{display:flex;align-items:center;gap:10px;background:var(--paper);border:3px solid var(--ink);border-radius:18px;
-  padding:6px 16px;box-shadow:0 4px 0 var(--ink);font-size:calc(var(--s)*.34)}
+.request{display:flex;align-items:center;gap:10px;background:var(--tile);color:var(--tile-ink);border:3px solid var(--tile-edge);border-radius:18px;
+  padding:6px 16px;box-shadow:0 4px 0 var(--tile-edge);font-size:calc(var(--s)*.34)}
 .request .emoji,
 .request .art{font-size:calc(var(--s)*.6)}
 .request .coin.sm{display:inline-block;margin:0 2px;vertical-align:middle}
 .shelf{display:flex;flex-wrap:wrap;max-width:100%;gap:6px 8px;justify-content:center;padding:10px 10px 0;border-bottom:12px solid #A86B43;border-radius:8px 8px 4px 4px;background:rgba(255,255,255,.35)}
 .shelf-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding-bottom:8px}
 .shelf-item>.emoji,
-.shelf-item>.art{font-size:calc(var(--s)*.72)}
-.ptag{display:flex;align-items:center;gap:2px;background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:2px 6px;font-size:calc(var(--s)*.24)}
-.ptag .coin.sm{width:calc(var(--s)*.13);height:calc(var(--s)*.13);border-width:1.5px}
+.shelf-item>.art{font-size:calc(var(--s)*.86)}
+.ptag{display:flex;align-items:center;gap:2px;background:var(--tile);color:var(--tile-ink);border:2px solid var(--tile-edge);border-radius:8px;padding:2px 6px;font-size:calc(var(--s)*.26)}
+.ptag .coin.sm{width:calc(var(--s)*.16);height:calc(var(--s)*.16);border-width:1.5px}
 .ptag b{font-weight:400;margin-left:4px}
 .tray .goods{font-size:calc(var(--s)*.75)}
 .tray .placeholder{opacity:.45;font-size:calc(var(--s)*.55)}
@@ -137,8 +141,8 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
 .coin{border-radius:50%;border:4px solid #2F3A68;
   background:radial-gradient(circle at 34% 30%,#FFF6C8 0 12%,transparent 13%),radial-gradient(circle,#FFC93C 0 54%,#E0A21B 55% 63%,#FFC93C 64%)}
 .coin.sm{width:calc(var(--s)*.32);height:calc(var(--s)*.32);border-width:2px}
-.piece.coin{width:calc(var(--s)*.85);height:calc(var(--s)*.85);border-radius:50%}
-.tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;min-width:calc(var(--s)*2.6);
+.piece.coin{width:calc(var(--s)*.72);height:calc(var(--s)*.72);border-radius:50%}
+.tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;min-width:calc(var(--s)*2.2);
   min-height:calc(var(--s)*.95);max-width:100%;padding:10px 14px;background:#C98B5A;border:4px solid var(--ink);border-radius:20px;box-shadow:0 6px 0 var(--ink)}
 .coin-slot{width:calc(var(--s)*.6);height:calc(var(--s)*.6);border-radius:50%;border:3px dashed rgba(47,58,104,.55);background:rgba(255,255,255,.25)}
 .coin-slot.coin,.tray .coin.mini{width:calc(var(--s)*.6);height:calc(var(--s)*.6);border-style:solid;animation:pop .3s}
@@ -150,7 +154,7 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
 .feed-request{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;padding:10px;
   max-width:calc(var(--s)*1.7);min-width:54px;min-height:54px}
 .feed-request::before{content:'';position:absolute;left:-11px;top:40%;width:16px;height:16px;
-  background:var(--paper);border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
+  background:var(--tile);border-left:3px solid var(--tile-edge);border-bottom:3px solid var(--tile-edge);transform:rotate(45deg)}
 .feed-request .emoji,.feed-request .art{font-size:calc(var(--s)*.34)}
 .feed-mid{display:flex;align-items:center;justify-content:center;gap:4px;width:100%}
 /* 鈴鐺放在碗旁邊、沒有底框：放好魚 → 按旁邊的鈴 */
@@ -176,12 +180,13 @@ button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
   .feed-pile{grid-column:2;grid-row:1/-1;gap:8px}
 }
 /* 規律 */
-.seq{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:100%}
-.cell{width:var(--c);height:var(--c);border-radius:24%;background:var(--paper);border:3px solid var(--ink);display:grid;place-items:center}
+.seq{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px;max-width:100%}
+.cell{width:var(--c);height:var(--c);border-radius:24%;background:var(--tile);border:3px solid var(--tile-edge);display:grid;place-items:center}
 .cell .emoji,
 .cell .art{font-size:calc(var(--c)*.66)}
-.cell.q{background:var(--hole);border:3px dashed var(--dash);font-size:calc(var(--c)*.55)}
-.cell.q.filled{background:var(--sun);border:3px solid var(--ink);animation:pop .4s}
+.cell.q{background:#FFF3C4;color:#2F3A68;border:4px dashed #E0A21B;font-size:calc(var(--c)*.6);animation:q-pulse 1.3s ease-in-out infinite}
+@keyframes q-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.cell.q.filled{background:var(--sun);border:3px solid var(--tile-edge);animation:pop .4s}
 button.piece{cursor:pointer}
 /* 大小 */
 .scale-hint{display:flex;align-items:flex-end;gap:10px;font-size:calc(var(--s)*.55)}
@@ -254,9 +259,10 @@ button.piece{cursor:pointer}
 .wardrobe-preview{flex:1;min-height:0;width:100%;display:grid;place-items:center;container-type:size}
 .wardrobe-ruby{width:min(100cqw,100cqh,340px);background:radial-gradient(ellipse,#FFFDF7aa 0 58%,transparent 60%)}
 .wardrobe-grid{display:grid;grid-template-columns:repeat(4,minmax(56px,1fr));gap:10px;width:min(100%,520px);flex-shrink:0}
-.home-item{position:relative;min-width:56px;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:0 4px 0 var(--ink);padding:6px 2px;font-size:36px}
+.home-item{position:relative;min-width:56px;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:var(--tile);color:var(--tile-ink);border:3px solid var(--tile-edge);border-radius:18px;box-shadow:0 4px 0 var(--tile-edge);padding:6px 2px;font-size:36px}
 .home-item[aria-pressed="true"]{background:#FFE7A0;border-color:#D04C85}
-.home-price{display:flex;align-items:center;justify-content:center;gap:1px;background:#FFF0B9;border-radius:7px;padding:3px 2px;font-size:11px;color:#2F3A68}
+.home-price{display:flex;align-items:center;justify-content:center;gap:0;background:#FFF0B9;border-radius:7px;padding:2px;font-size:14px;color:#2F3A68}
+.home-item.too-dear>.art,.home-item.too-dear>.emoji,.home-item.too-dear .home-price{opacity:.4;filter:grayscale(.6)}
 .home-price .art{width:1em;height:1em}
 .owned-mark{font-size:16px;color:#237349;line-height:1}
 .room-scene{position:relative;isolation:isolate;flex:1;min-height:150px;width:100%;max-width:1000px;overflow:hidden;border:4px solid var(--ink);border-radius:22px;background:linear-gradient(transparent 62%,#A76D4E 62% 64%,transparent 64%),linear-gradient(#FFD9E4 0 64%,transparent 64%),repeating-linear-gradient(0deg,transparent 0 34px,#AA765733 35px 38px),repeating-linear-gradient(90deg,#E8B784 0 95px,#C18F65 96px 99px)}
@@ -268,7 +274,7 @@ button.piece{cursor:pointer}
 @keyframes room-waddle{0%,100%{transform:rotate(-6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-6%)}}
 @keyframes room-jump{0%,100%{transform:translateY(0)}45%{transform:translateY(-8%)}}
 @media(prefers-reduced-motion:reduce){.room-ruby-step{animation:none!important}}
-.room-cart{position:absolute;right:10px;top:10px;z-index:200;background:#FFD35C;font-size:30px}
+.room-cart{position:absolute;right:10px;top:10px;z-index:200;background:#FFD35C;font-size:36px;width:68px;height:68px}
 .room-tray{position:relative;flex-shrink:0;display:grid;grid-template-columns:repeat(5,56px);grid-auto-rows:56px;align-content:center;justify-content:center;gap:4px;min-height:68px;width:min(100%,660px);padding:6px;background:#E7BC91;border:3px solid var(--ink);border-radius:18px;box-shadow:0 4px 0 var(--ink)}
 .tray-hint{position:absolute;inset:0;display:grid;place-items:center;opacity:.2;font-size:48px;z-index:0}
 .room-object{--object-size:56px;--half:calc(var(--object-size)/2);width:56px;height:56px;display:grid;place-items:center;font-size:40px;touch-action:none;position:relative;z-index:2;border-radius:12px;background:#fff7;cursor:grab}
@@ -328,7 +334,7 @@ button.piece{cursor:pointer}
 
 /* Find the kittens: each button contains its own peek, cover and reveal. */
 .hide-game{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;gap:8px;--hide-s:80px}
-.hide-counter{display:flex;justify-content:center;gap:8px;flex-shrink:0;height:44px}
+.hide-counter{display:flex;justify-content:center;gap:8px;flex-shrink:0;height:48px;align-self:center;padding:2px 14px;background:rgba(255,253,247,.9);border-radius:999px}
 .hide-count{display:grid;place-items:center;width:40px;height:40px;filter:brightness(0);opacity:.22}
 .hide-count .art,.hide-count .emoji{font-size:34px}
 .hide-count.filled{filter:none;opacity:1;animation:boing .6s}
@@ -336,7 +342,7 @@ button.piece{cursor:pointer}
 .hide-spot{position:absolute;isolation:isolate;touch-action:manipulation;border-radius:20px}
 .hide-spot .art,.hide-spot .emoji{display:block;width:100%;height:100%;object-fit:contain;font-size:calc(var(--hide-s)*.65);line-height:1;pointer-events:none}
 .hide-cover{position:absolute;z-index:2;left:14%;top:30%;width:72%;height:62%;display:grid;place-items:center;background:#D3E6BB;border-radius:38% 38% 24% 24%;transform:scale(var(--size)) scaleX(var(--mirror));transform-origin:50% 90%;transition:transform .45s ease,opacity .45s}
-.hide-cover .art,.hide-cover .emoji{width:calc(var(--hide-s)*.65);height:calc(var(--hide-s)*.65);max-width:100%;max-height:100%}
+.hide-cover .art,.hide-cover .emoji{width:calc(var(--hide-s)*.82);height:calc(var(--hide-s)*.82);max-width:100%;max-height:100%}
 .hide-peek{position:absolute;z-index:1;left:32%;top:10%;width:40%;height:50%;transform:scaleX(var(--mirror))}
 .hide-peek .art,.hide-peek .emoji{font-size:calc(var(--hide-s)*.36)}
 .hide-head{clip-path:inset(0 0 45% 0)}
@@ -351,7 +357,7 @@ button.piece{cursor:pointer}
 @keyframes hide-wiggle{25%{rotate:-7deg}75%{rotate:7deg}}
 /* The ninth game and Ruby's house share the final pair of menu cells. */
 @media (orientation:landscape) and (min-width:600px){
-  .menu [data-game="hide"],.menu .house-menu{grid-column:span 2}
+  .menu .house-menu{grid-column:1/-1}
 }
 .wardrobe-ruby{pointer-events:auto;cursor:pointer}
 /* 背景插圖（任務 17）：首頁草地、遊戲畫面淡天空；深色模式用夜晚草地 */
@@ -375,7 +381,10 @@ button.piece{cursor:pointer}
 .ruby-wear.ruby-wear-fit{inset:-11.66%;width:auto;height:auto;transform:none}
 .shop-bag{min-height:calc(var(--s)*.5);gap:4px}
 .shop-bag .art,.shop-bag .emoji{font-size:calc(var(--s)*.45)}
-.shop-checkout[hidden]{display:flex;visibility:hidden}
+.shop-counter{display:flex;align-items:center;justify-content:center;gap:10px;max-width:100%}
+.shop-checkout[hidden]{display:grid;visibility:hidden}
+.shop-wallet.waiting{opacity:.5;filter:saturate(.5)}
+.shop-wallet{transition:opacity .3s,filter .3s}
 /* 小小商店：購物車＋總價，一次結帳 */
 .shelf-item.in-cart{opacity:.35;transform:scale(.9)}
 .shop-total{display:flex;align-items:center;gap:3px;min-height:calc(var(--s)*.4);font-size:calc(var(--s)*.3)}
@@ -389,18 +398,41 @@ button.piece{cursor:pointer}
 .hide-cover:has(img.art){background:none}
 /* 首頁 10 個遊戲：露比的家佔滿一整列；矮螢幕改成「圖示在左、文字在右」的扁按鈕 */
 .menu #houseBtn{grid-column:1/-1;flex-direction:row;gap:12px}
-@media (max-height:760px),(max-width:600px){
-  #home .menu .game-btn{flex-direction:row;gap:8px;min-height:50px;padding:4px 8px}
-  #home .menu .game-btn>:first-child{font-size:1.45em}
+#home .menu{grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vh,14px);width:min(100%,620px);padding:4px 14px 12px}
+#home .menu .game-btn{flex-direction:column;gap:2px;min-height:0;padding:6px 2px 5px;border-radius:20px;border-width:3px;box-shadow:0 5px 0 var(--ink);font-size:clamp(13px,3.7vw,20px);line-height:1.15}
+#home .menu .game-btn>:first-child{font-size:clamp(44px,8.2vh,84px);line-height:1}
+#home .menu #houseBtn{flex-direction:row;gap:12px;font-size:clamp(16px,4.4vw,24px);padding:3px 8px}
+#home .menu #houseBtn>:first-child{font-size:clamp(38px,6.4vh,64px)}
+#home .home-heading .title{margin:0}
+#home .diff{margin:0 0 4px;gap:8px}
+#home .diff button{min-height:38px;padding:2px 12px;font-size:15px;border-width:2px}
+#home .home-top{padding:6px 14px}
+#home .icon-btn{width:48px;height:48px}
+#home .stars{min-height:48px}
+#homeRuby{width:58px;height:58px}
+#homeRuby>.home-ruby-sleep{font-size:58px}
+@media (max-height:600px) and (orientation:portrait){
+  #home .menu .game-btn>:first-child{font-size:38px}
+  #home .menu #houseBtn>:first-child{font-size:30px}
+  #home .menu{gap:7px;padding-bottom:8px}
+  #homeRuby{width:48px;height:48px}
+}
+/* 家長小提示：已經加到主畫面就不用再看；矮螢幕讓位給遊戲 */
+@media (display-mode:standalone),(max-height:720px){.parent-tip{display:none}}
+.standalone .parent-tip{display:none}
+@media (orientation:landscape){
+  #home .menu{grid-template-columns:repeat(6,minmax(0,1fr));width:min(100%,960px);gap:8px}
+  #home .menu .game-btn>:first-child{font-size:clamp(34px,11vh,72px)}
+  #home .menu [data-game="hide"]{grid-column:auto}
+  #home .menu #houseBtn>:first-child{font-size:clamp(28px,8vh,56px)}
 }
 #home{overflow-y:auto}
-/* ---------- 救援大隊：選車 ---------- */
 /* ---------- 消防車滅火 ---------- */
 .fire-game{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.fire-scene{position:relative;width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-around}
+.fire-scene{position:relative;width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-around;touch-action:none}
 .fire-house{position:relative;width:var(--house,300px);height:var(--house,300px)}
 .fire-house>.art,.fire-house>.emoji{width:100%;height:100%;font-size:var(--house,300px)}
-.fire-flame{position:absolute;width:calc(var(--house,300px)*.3);height:calc(var(--house,300px)*.3);transform:translate(-50%,-50%) scale(var(--k,1));transition:transform .25s;display:grid;place-items:center;padding:0;touch-action:none}
+.fire-flame{position:absolute;width:calc(var(--house,300px)*.3);height:calc(var(--house,300px)*.3);transform:translate(-50%,-50%) scale(var(--k,1));transition:transform .25s;display:grid;place-items:center;padding:0;pointer-events:none}
 .fire-flame .art,.fire-flame .emoji{width:100%;height:100%;font-size:calc(var(--house,300px)*.22);animation:wiggle 1s ease-in-out infinite}
 .fire-flame.out{transform:translate(-50%,-50%) scale(1)}
 .fire-flame.out>.art,.fire-flame.out>.emoji{display:none}
@@ -434,8 +466,8 @@ button.piece{cursor:pointer}
 .bandage-pad{border-radius:24%}
 /* ---------- 警車走迷宮 ---------- */
 .maze-game{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
-.maze-car{width:72px;height:56px}
-.maze-car .art,.maze-car .emoji{width:100%;height:100%;font-size:48px}
+.maze-car{width:84px;height:72px}
+.maze-car .art,.maze-car .emoji{width:100%;height:100%;font-size:60px}
 .maze-board{position:relative;width:var(--board,300px);height:var(--board,300px);display:grid;grid-template-columns:repeat(var(--n),1fr);grid-template-rows:repeat(var(--n),1fr);background:#F4FBEF;border:6px solid #3E9150;border-radius:18px;touch-action:none;box-shadow:0 6px 0 var(--ink)}
 .maze-cell{position:relative;display:grid;place-items:center;--wall:6px solid #3E9150}
 .maze-cell.wt{border-top:var(--wall)}.maze-cell.wr{border-right:var(--wall)}.maze-cell.wb{border-bottom:var(--wall)}.maze-cell.wl{border-left:var(--wall)}
@@ -444,3 +476,9 @@ button.piece{cursor:pointer}
 .maze-pup{position:absolute;left:0;top:0;width:calc(100%/var(--n));height:calc(100%/var(--n));transform:translate(calc(var(--x)*100%),calc(var(--y)*100%));transition:transform .18s ease-out;display:grid;place-items:center;pointer-events:none;z-index:3}
 .maze-pup .art,.maze-pup .emoji{width:88%;height:88%;font-size:calc(var(--board,300px)/var(--n)*.7)}
 .maze-pup.home{animation:boing .7s}
+/* ---------- 共用互動回饋 ---------- */
+.hop{animation:hop .4s ease-out}
+@keyframes hop{0%,100%{translate:0 0}45%{translate:0 -16px}}
+.drop-over{outline:5px solid var(--sun);outline-offset:3px;scale:1.06;transition:scale .12s}
+.feed-bowl.drop-over,.bandage-cut.drop-over{outline:0;scale:1.14}
+.puzzle-cell.drop-over{outline-offset:-5px;scale:1;background-color:rgba(255,211,92,.35)}

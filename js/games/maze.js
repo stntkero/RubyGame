@@ -67,25 +67,33 @@ GAMES.maze = function(stage,L,done){
     }
     return true;
   };
-  // 拖曳：手指經過的格子如果和小狗相鄰又沒有牆擋，小狗就走過去
-  let dragging=false;
+  // 手指到的格子如果沿著路走兩步以內就到得了，小狗就走過去：手指滑太快不會把小狗丟下，
+  // 而且被牆隔開的格子至少要繞三步，所以不會穿牆
+  const walkTo=c=>{
+    const path=mazePath(walls,n,at,c);
+    if(path.length<2||path.length>3)return false;
+    path.slice(1).forEach(step);
+    return true;
+  };
+  let dragging=false,blocked=-1;
   const cellAt=(x,y)=>{const r=board.getBoundingClientRect();const cx=Math.floor((x-r.left)/r.width*n),cy=Math.floor((y-r.top)/r.height*n);return cx<0||cy<0||cx>=n||cy>=n?-1:cy*n+cx};
   board.addEventListener('pointerdown',e=>{
     if(finished)return;e.preventDefault();
     const c=cellAt(e.clientX,e.clientY);
-    if(c===at){dragging=true;try{board.setPointerCapture(e.pointerId)}catch(_){}sfx.pop();return}
-    // 點旁邊的格子：走一步；走不過去就晃一下
-    if(c>=0&&!step(c)&&c!==at)wrong(cells[c]);
+    // 手指放在哪裡都可以開始拖，不一定要剛好按在小狗身上
+    dragging=true;blocked=-1;try{board.setPointerCapture(e.pointerId)}catch(_){}
+    if(c===at){sfx.pop();return}
+    if(c>=0&&!walkTo(c))blocked=c;
   });
   board.addEventListener('pointermove',e=>{
     if(!dragging)return;
     const c=cellAt(e.clientX,e.clientY);if(c<0||c===at)return;
-    // 手指移動很快時，沿著直線一格一格補上
-    const path=mazePath(walls,n,at,c);
-    if(path.length===2)step(c);
+    if(c!==blocked)blocked=-1;
+    walkTo(c);
   });
-  const stop=()=>{dragging=false};
-  board.addEventListener('pointerup',stop);board.addEventListener('pointercancel',stop);
+  // 只點一下而且走不過去，才晃一下那一格
+  board.addEventListener('pointerup',()=>{dragging=false;if(blocked>=0&&!finished)wrong(cells[blocked]);blocked=-1});
+  board.addEventListener('pointercancel',()=>{dragging=false;blocked=-1});
   root.append(car,board);stage.append(root);
   say('小狗迷路了，帶牠回家吧！');
   idleHint(()=>{
@@ -94,6 +102,6 @@ GAMES.maze = function(stage,L,done){
   });
   return ()=>{
     const W=stage.clientWidth-24,H=stage.clientHeight-24;
-    root.style.setProperty('--board',Math.floor(Math.min(W,H-80,560)/n)*n+'px');
+    root.style.setProperty('--board',Math.floor(Math.min(W,H-96,560)/n)*n+'px');
   };
 };
